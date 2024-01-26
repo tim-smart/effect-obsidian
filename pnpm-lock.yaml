@@ -124,13 +124,19 @@ importers:
 
   packages/canvas-mindmap:
     dependencies:
-      effect-obsidian:
-        specifier: workspace:^
-        version: link:../effect-obsidian/dist
       obsidian:
         specifier: ^1.4.11
         version: 1.4.11(@codemirror/state@6.4.0)(@codemirror/view@6.23.1)
     devDependencies:
+      '@effect/schema':
+        specifier: ^0.61.1
+        version: 0.61.1(effect@2.2.2)(fast-check@3.15.0)
+      effect:
+        specifier: ^2.2.2
+        version: 2.2.2
+      effect-obsidian:
+        specifier: workspace:^
+        version: link:../effect-obsidian/dist
       tsup:
         specifier: ^8.0.1
         version: 8.0.1(postcss@8.4.33)(typescript@5.3.3)
@@ -138,6 +144,12 @@ importers:
 
   packages/effect-obsidian:
     devDependencies:
+      '@effect/schema':
+        specifier: ^0.61.1
+        version: 0.61.1(effect@2.2.2)(fast-check@3.15.0)
+      effect:
+        specifier: ^2.2.2
+        version: 2.2.2
       obsidian:
         specifier: ^1.4.11
         version: 1.4.11(@codemirror/state@6.4.0)(@codemirror/view@6.23.1)
@@ -709,6 +721,16 @@ packages:
 
   /@effect/language-service@0.1.0:
     resolution: {integrity: sha512-BnlM8LlaqCAYgdRfxlbR7gXGh/FD1scL1fPgNVJEPoOM08od1jtJz+iKhwfaud8TPnnhZR+TED2h5ynjanLeCQ==}
+    dev: true
+
+  /@effect/schema@0.61.1(effect@2.2.2)(fast-check@3.15.0):
+    resolution: {integrity: sha512-xeZcdTPry9+pT/63rY8R6Ef6cZAy0d4o0JrjEfw3LWXRDS1avGLvbcIA7nYPO2q6RhE3oVQUg8RtePdaT8aNzQ==}
+    peerDependencies:
+      effect: ^2.2.2
+      fast-check: ^3.13.2
+    dependencies:
+      effect: 2.2.2
+      fast-check: 3.15.0
     dev: true
 
   /@esbuild/aix-ppc64@0.19.12:
@@ -2492,6 +2514,10 @@ packages:
 
   /eastasianwidth@0.2.0:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
+    dev: true
+
+  /effect@2.2.2:
+    resolution: {integrity: sha512-hY/37Ssd2Zfn0r09vDe9tSYPVS5HZBbmW4DMBO7OIIvRADgp5cnWfLhY6pVy+Bm5DXV9luFycjDcB1731WGyTA==}
     dev: true
 
   /electron-to-chromium@1.4.647:

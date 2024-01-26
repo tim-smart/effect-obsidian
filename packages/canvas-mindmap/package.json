@@ -17,6 +17,7 @@
     "directory": "dist"
   },
   "scripts": {
+    "dev": "tsup --watch",
     "build": "tsup",
     "check": "tsc -b tsconfig.json"
   },
@@ -24,6 +25,8 @@
     "obsidian": "^1.4.11"
   },
   "devDependencies": {
+    "@effect/schema": "^0.61.1",
+    "effect": "^2.2.2",
     "effect-obsidian": "workspace:^",
     "tsup": "^8.0.1"
   }

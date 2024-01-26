@@ -1,7 +1,7 @@
 {
   "compilerOptions": {
     "strict": true,
-    "exactOptionalPropertyTypes": true,
+    "exactOptionalPropertyTypes": false,
     "moduleDetection": "force",
     "composite": true,
     "downlevelIteration": true,
@@ -38,7 +38,7 @@
     "plugins": [{ "name": "@effect/language-service" }],
     "paths": {
       "effect-obsidian": ["./packages/effect-obsidian/src/index.js"],
-      "effect-obsidian/*": ["./packages/effect-obsidian/src/*.js"],
+      "effect-obsidian/*": ["./packages/effect-obsidian/src/*.js"]
     }
   }
 }
