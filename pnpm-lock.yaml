@@ -31,9 +31,6 @@ importers:
       '@changesets/cli':
         specifier: ^2.27.1
         version: 2.27.1
-      '@edge-runtime/vm':
-        specifier: ^3.1.7
-        version: 3.1.8
       '@effect/build-utils':
         specifier: ^0.7.1
         version: 0.7.1
@@ -58,13 +55,7 @@ importers:
       '@typescript-eslint/parser':
         specifier: ^6.15.0
         version: 6.19.1(eslint@8.56.0)(typescript@5.3.3)
-      '@vitest/browser':
-        specifier: ^1.1.0
-        version: 1.2.1(playwright@1.41.1)(vitest@1.2.1)
       '@vitest/coverage-v8':
-        specifier: ^1.1.0
-        version: 1.2.1(vitest@1.2.1)
-      '@vitest/web-worker':
         specifier: ^1.1.0
         version: 1.2.1(vitest@1.2.1)
       babel-plugin-annotate-pure-calls:
@@ -100,9 +91,6 @@ importers:
       madge:
         specifier: ^6.1.0
         version: 6.1.0(typescript@5.3.3)
-      playwright:
-        specifier: ^1.40.1
-        version: 1.41.1
       prettier:
         specifier: ^3.1.1
         version: 3.2.4
@@ -120,7 +108,7 @@ importers:
         version: 5.0.12(@types/node@20.11.7)
       vitest:
         specifier: ^1.1.0
-        version: 1.2.1(@edge-runtime/vm@3.1.8)(@types/node@20.11.7)(@vitest/browser@1.2.1)
+        version: 1.2.1(@types/node@20.11.7)
 
   packages/canvas-mindmap:
     dependencies:
@@ -666,18 +654,6 @@ packages:
     resolution: {integrity: sha512-rPwwm/RrFIolz6xHa8Kzpshuwpe+xu/XcEw9iUmRF2tnyIwxxaW7XoFKaQ+GfPju81cKpH4vJeq7/2IizKvyjg==}
     dev: true
 
-  /@edge-runtime/primitives@4.0.6:
-    resolution: {integrity: sha512-Ahv7SdVJiFryuauSmubY4bVYvVWsf2h/n67TRRT5ERs6eK90xyeCB3hmn1ExTqaZtxO0Q9QTbEUXVxz6o4iSzw==}
-    engines: {node: '>=16'}
-    dev: true
-
-  /@edge-runtime/vm@3.1.8:
-    resolution: {integrity: sha512-BticbgpQAh8zRXUrpkbwxhEy9eAMp0L0+thAcS+xLD+uhWpTqsyqovdvV6e4FeeRo5sBg+lnMpoSG8bulFHKTQ==}
-    engines: {node: '>=16'}
-    dependencies:
-      '@edge-runtime/primitives': 4.0.6
-    dev: true
-
   /@effect/build-utils@0.7.1:
     resolution: {integrity: sha512-xYIALMRjdPR1Wb2cyj4R9y+T9/6x0ragIOsQRn4C2HRVCOvEpYyt3ME8TcrSu5De6M1XHT4PuQ5z5d9E0T6j2w==}
     engines: {node: '>=16.17.1'}
@@ -1124,10 +1100,6 @@ packages:
     dev: true
     optional: true
 
-  /@polka/url@1.0.0-next.24:
-    resolution: {integrity: sha512-2LuNTFBIO0m7kKIQvvPHN6UE63VjpmL9rnEEaOOaiSPbZK+zUOYIzBAWcED+3XYzhYsd/0mD57VdxAEqqV52CQ==}
-    dev: true
-
   /@rollup/rollup-android-arm-eabi@4.9.6:
     resolution: {integrity: sha512-MVNXSSYN6QXOulbHpLMKYi60ppyO13W9my1qogeiAqtjb2yR4LSmfU2+POvDkLzhjYLXz9Rf9+9a3zFHW1Lecg==}
     cpu: [arm]
@@ -1560,28 +1532,6 @@ packages:
     resolution: {integrity: sha512-zuVdFrMJiuCDQUMCzQaD6KL28MjnqqN8XnAqiEq9PNm/hCPTSGfrXCOfwj1ow4LFb/tNymJPwsNbVePc1xFqrQ==}
     dev: true
 
-  /@vitest/browser@1.2.1(playwright@1.41.1)(vitest@1.2.1):
-    resolution: {integrity: sha512-jhaQ15zWYAwz8anXgmLW0yAVLCXdT8RFv7LeW9bg7sMlvGJaTCTIHaHWFvCdADF/i62+22tnrzgiiqSnApjXtA==}
-    peerDependencies:
-      playwright: '*'
-      safaridriver: '*'
-      vitest: ^1.0.0
-      webdriverio: '*'
-    peerDependenciesMeta:
-      playwright:
-        optional: true
-      safaridriver:
-        optional: true
-      webdriverio:
-        optional: true
-    dependencies:
-      '@vitest/utils': 1.2.1
-      magic-string: 0.30.5
-      playwright: 1.41.1
-      sirv: 2.0.4
-      vitest: 1.2.1(@edge-runtime/vm@3.1.8)(@types/node@20.11.7)(@vitest/browser@1.2.1)
-    dev: true
-
   /@vitest/coverage-v8@1.2.1(vitest@1.2.1):
     resolution: {integrity: sha512-fJEhKaDwGMZtJUX7BRcGxooGwg1Hl0qt53mVup/ZJeznhvL5EodteVnb/mcByhEcvVWbK83ZF31c7nPEDi4LOQ==}
     peerDependencies:
@@ -1600,7 +1550,7 @@ packages:
       std-env: 3.7.0
       test-exclude: 6.0.0
       v8-to-istanbul: 9.2.0
-      vitest: 1.2.1(@edge-runtime/vm@3.1.8)(@types/node@20.11.7)(@vitest/browser@1.2.1)
+      vitest: 1.2.1(@types/node@20.11.7)
     transitivePeerDependencies:
       - supports-color
     dev: true
@@ -1642,17 +1592,6 @@ packages:
       estree-walker: 3.0.3
       loupe: 2.3.7
       pretty-format: 29.7.0
-    dev: true
-
-  /@vitest/web-worker@1.2.1(vitest@1.2.1):
-    resolution: {integrity: sha512-/fZZO7Xf4mU2mMXSMQ0xRaFi+vV3FPhCP9JSJgwRAWJTDATtwL1IMHFOHHCpIwtD/VutcbUFVvql8iAriKvirQ==}
-    peerDependencies:
-      vitest: ^1.0.0
-    dependencies:
-      debug: 4.3.4
-      vitest: 1.2.1(@edge-runtime/vm@3.1.8)(@types/node@20.11.7)(@vitest/browser@1.2.1)
-    transitivePeerDependencies:
-      - supports-color
     dev: true
 
   /acorn-jsx@5.3.2(acorn@8.11.3):
@@ -3222,14 +3161,6 @@ packages:
     resolution: {integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==}
     dev: true
 
-  /fsevents@2.3.2:
-    resolution: {integrity: sha512-xiqMQR4xAeHTuB9uWm+fFRcIOgKBMiOBP+eXiyT7jsgVCq1bkVygt00oASowB7EdtpOHaaPgKt812P9ab+DDKA==}
-    engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
-    os: [darwin]
-    requiresBuild: true
-    dev: true
-    optional: true
-
   /fsevents@2.3.3:
     resolution: {integrity: sha512-5xoDfX+fL7faATnagmWPpbFtwh/R77WmMMqqHGS65C3vvB0YHrgF+B1YmZ3441tMj5n63k0212XNoJwzlhffQw==}
     engines: {node: ^8.16.0 || ^10.6.0 || >=11.0.0}
@@ -4452,11 +4383,6 @@ packages:
   /moment@2.29.4:
     resolution: {integrity: sha512-5LC9SOxjSc2HF6vO2CyuTDNivEdoz2IvyJJGj6X8DJ0eFyfszE0QiEd+iXmBvUP3WHxSjFH/vIsA0EN00cgr8w==}
 
-  /mrmime@2.0.0:
-    resolution: {integrity: sha512-eu38+hdgojoyq63s+yTpN4XMBdt5l8HhMhc4VKLO9KM5caLIBvUm4thi7fFaxyTmCKeNnXZ5pAlBwCUnhA09uw==}
-    engines: {node: '>=10'}
-    dev: true
-
   /ms@2.1.2:
     resolution: {integrity: sha512-sGkPx+VjMtmA6MX27oA4FBFELFCZZ4S4XqeGOXCv68tT+jb3vk/RyaKWP0PTKyWtmLSM0b+adUTEvbs1PEaH2w==}
     dev: true
@@ -4833,22 +4759,6 @@ packages:
       jsonc-parser: 3.2.1
       mlly: 1.5.0
       pathe: 1.1.2
-    dev: true
-
-  /playwright-core@1.41.1:
-    resolution: {integrity: sha512-/KPO5DzXSMlxSX77wy+HihKGOunh3hqndhqeo/nMxfigiKzogn8kfL0ZBDu0L1RKgan5XHCPmn6zXd2NUJgjhg==}
-    engines: {node: '>=16'}
-    hasBin: true
-    dev: true
-
-  /playwright@1.41.1:
-    resolution: {integrity: sha512-gdZAWG97oUnbBdRL3GuBvX3nDDmUOuqzV/D24dytqlKt+eI5KbwusluZRGljx1YoJKZ2NRPaeWiFTeGZO7SosQ==}
-    engines: {node: '>=16'}
-    hasBin: true
-    dependencies:
-      playwright-core: 1.41.1
-    optionalDependencies:
-      fsevents: 2.3.2
     dev: true
 
   /pluralize@8.0.0:
@@ -5381,15 +5291,6 @@ packages:
     engines: {node: '>=14'}
     dev: true
 
-  /sirv@2.0.4:
-    resolution: {integrity: sha512-94Bdh3cC2PKrbgSOUqTiGPWVZeSiXfKOVZNJniWoqrWrRkB1CJzBU3NEbiTsPcYy1lDsANA/THzS+9WBiy5nfQ==}
-    engines: {node: '>= 10'}
-    dependencies:
-      '@polka/url': 1.0.0-next.24
-      mrmime: 2.0.0
-      totalist: 3.0.1
-    dev: true
-
   /slash@2.0.0:
     resolution: {integrity: sha512-ZYKh3Wh2z1PpEXWr0MpSBZ0V6mZHAQfYevttO11c51CaWjGTaadiKZ+wVt1PbMlDV5qhMFslpZCemhwOK7C89A==}
     engines: {node: '>=6'}
@@ -5764,11 +5665,6 @@ packages:
     requiresBuild: true
     dependencies:
       is-number: 7.0.0
-    dev: true
-
-  /totalist@3.0.1:
-    resolution: {integrity: sha512-sf4i37nQ2LBx4m3wB74y+ubopq6W/dIzXg0FDGjsYnZHVa1Da8FH853wlL2gtUhg+xJXjfk3kUZS3BRoQeoQBQ==}
-    engines: {node: '>=6'}
     dev: true
 
   /tr46@0.0.3:
@@ -6177,7 +6073,7 @@ packages:
       fsevents: 2.3.3
     dev: true
 
-  /vitest@1.2.1(@edge-runtime/vm@3.1.8)(@types/node@20.11.7)(@vitest/browser@1.2.1):
+  /vitest@1.2.1(@types/node@20.11.7):
     resolution: {integrity: sha512-TRph8N8rnSDa5M2wKWJCMnztCZS9cDcgVTQ6tsTFTG/odHJ4l5yNVqvbeDJYJRZ6is3uxaEpFs8LL6QM+YFSdA==}
     engines: {node: ^18.0.0 || >=20.0.0}
     hasBin: true
@@ -6202,9 +6098,7 @@ packages:
       jsdom:
         optional: true
     dependencies:
-      '@edge-runtime/vm': 3.1.8
       '@types/node': 20.11.7
-      '@vitest/browser': 1.2.1(playwright@1.41.1)(vitest@1.2.1)
       '@vitest/expect': 1.2.1
       '@vitest/runner': 1.2.1
       '@vitest/snapshot': 1.2.1
