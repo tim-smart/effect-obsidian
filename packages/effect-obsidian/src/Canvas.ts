@@ -7,6 +7,7 @@ import { pipe } from "effect/Function"
 import type * as Option from "effect/Option"
 import * as ReadonlyArray from "effect/ReadonlyArray"
 import * as Obsidian from "obsidian"
+import type { AllCanvasNodeData, CanvasData, NodeSide } from "obsidian/canvas.js"
 import * as Identifier from "./Identifier.js"
 import * as Plugin from "./Plugin.js"
 
@@ -126,137 +127,6 @@ export const selectedNode: Effect.Effect<Canvas, never, Option.Option<CanvasNode
  * @since 1.0.0
  * @category models
  */
-export type CanvasColor = string
-
-/**
- * @since 1.0.0
- * @category models
- */
-export interface CanvasData {
-  nodes: Array<AllCanvasNodeData>
-  edges: Array<CanvasEdgeData>
-
-  /** Support arbitrary keys for forward compatibility */
-  [key: string]: any
-}
-
-/**
- * @since 1.0.0
- * @category models
- */
-export interface CanvasNodeData {
-  /** The unique ID for this node */
-  id: string
-  // The positional data
-  x: number
-  y: number
-  width: number
-  height: number
-  /** The color of this node */
-  color?: CanvasColor
-
-  // Support arbitrary keys for forward compatibility
-  [key: string]: any
-}
-
-/**
- * @since 1.0.0
- * @category models
- */
-export type AllCanvasNodeData = CanvasFileData | CanvasTextData | CanvasLinkData | CanvasGroupData
-
-/** A node that is a file, where the file is located somewhere in the vault. */
-/**
- * @since 1.0.0
- * @category models
- */
-export interface CanvasFileData extends CanvasNodeData {
-  type: "file"
-  file: string
-  /** An optional subpath which links to a heading or a block. Always starts with a `#`. */
-  subpath?: string
-}
-
-/**
- * @since 1.0.0
- * @category models
- */
-export interface CanvasTextData extends CanvasNodeData {
-  type: "text"
-  text: string
-}
-
-/**
- * @since 1.0.0
- * @category models
- */
-export interface CanvasLinkData extends CanvasNodeData {
-  type: "link"
-  url: string
-}
-
-/**
- * @since 1.0.0
- * @category models
- */
-export type BackgroundStyle = "cover" | "ratio" | "repeat"
-
-/**
- * @since 1.0.0
- * @category models
- */
-export interface CanvasGroupData extends CanvasNodeData {
-  type: "group"
-  /** Optional label to display on top of the group. */
-  label?: string
-  /** Optional background image, stores the path to the image file in the vault. */
-  background?: string
-  /** Optional background image rendering style; defaults to 'cover'. */
-  backgroundStyle?: BackgroundStyle
-}
-
-/**
- * @since 1.0.0
- * @category models
- */
-export type NodeSide = "top" | "right" | "bottom" | "left"
-
-/**
- * @since 1.0.0
- * @category models
- */
-export type EdgeEnd = "none" | "arrow"
-
-/**
- * @since 1.0.0
- * @category models
- */
-export interface CanvasEdgeData {
-  /** The unique ID for this edge */
-  id: string
-  /** The node ID and side where this edge starts */
-  fromNode: string
-  fromSide: NodeSide
-  /** The starting edge end; defaults to 'none' */
-  fromEnd?: EdgeEnd
-  /** The node ID and side where this edge ends */
-  toNode: string
-  toSide: NodeSide
-  /** The ending edge end; defaults to 'arrow' */
-  toEnd?: EdgeEnd
-  /** The color of this edge */
-  color?: CanvasColor
-  /** The text label of this edge, if available */
-  label?: string
-
-  // Support arbitrary keys for forward compatibility
-  [key: string]: any
-}
-
-/**
- * @since 1.0.0
- * @category models
- */
 export interface CanvasMenu {
   containerEl: HTMLElement
   menuEl: HTMLElement
@@ -316,6 +186,7 @@ export interface CanvasNode {
   bbox: CanvasCoords
   unknownData: CanvasNodeUnknownData
   renderedZIndex: number
+  color: string
 
   headerComponent: Obsidian.Component
 
@@ -328,10 +199,12 @@ export interface CanvasNode {
   app: Obsidian.App
 
   getBBox(containing?: boolean): CanvasCoords
-
+  getData: () => AllCanvasNodeData
   moveTo({ x, y }: { x: number; y: number }): void
-
+  setColor: (color: string) => void
   render(): void
+
+  readonly [key: string]: any
 }
 
 /**

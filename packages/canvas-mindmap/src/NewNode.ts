@@ -22,6 +22,9 @@ export const NewNodeLive = Layer.scopedDiscard(
           }
         })
 
+        console.log(node)
+        newNode.setColor(node.color)
+
         if (Option.isSome(parentNode)) {
           yield* _(Canvas.createEdge({
             from: parentNode.value,
