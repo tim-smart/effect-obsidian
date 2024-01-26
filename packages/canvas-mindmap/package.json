@@ -1,0 +1,30 @@
+{
+  "name": "obsidian-canvas-mindmap",
+  "version": "0.0.0",
+  "type": "module",
+  "license": "MIT",
+  "description": "",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/tim-smart/effect-obsidian.git",
+    "directory": "packages/obsidian-canvas-mindmap"
+  },
+  "bugs": {
+    "url": "https://github.com/tim-smart/effect-obsidian/issues"
+  },
+  "publishConfig": {
+    "access": "public",
+    "directory": "dist"
+  },
+  "scripts": {
+    "build": "tsup",
+    "check": "tsc -b tsconfig.json"
+  },
+  "dependencies": {
+    "obsidian": "^1.4.11"
+  },
+  "devDependencies": {
+    "effect-obsidian": "workspace:^",
+    "tsup": "^8.0.1"
+  }
+}
