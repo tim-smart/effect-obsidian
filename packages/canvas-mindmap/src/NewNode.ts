@@ -33,6 +33,7 @@ export const NewNodeLive = Effect.all([
       }
 
       canvas.requestSave()
+      canvas.zoomToSelection()
     }).pipe(Effect.catchAllCause(Effect.log))
   }),
   Canvas.addCommand({
@@ -72,6 +73,7 @@ export const NewNodeLive = Effect.all([
       )
 
       canvas.requestSave()
+      canvas.zoomToSelection()
     }).pipe(Effect.catchAllCause(Effect.log))
   })
 ]).pipe(Layer.scopedDiscard)
