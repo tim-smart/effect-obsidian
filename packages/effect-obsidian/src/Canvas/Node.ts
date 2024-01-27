@@ -38,16 +38,25 @@ export const parent = (
  */
 export const children = (
   node: Canvas.CanvasNode
-): Effect.Effect<Canvas.Canvas, never, Array<Canvas.CanvasNode>> =>
+): Effect.Effect<Canvas.Canvas, never, ReadonlyArray<Canvas.CanvasNode>> =>
   Effect.gen(function*(_) {
     const canvas = yield* _(Canvas.Canvas)
-    return pipe(
-      canvas.getEdgesForNode(node),
-      ReadonlyArray.filter((_) => _.from.node.id === node.id),
-      ReadonlyArray.map((_) => _.to.node),
-      ReadonlyArray.sort(yOrder)
-    )
+    return childrenFromEdges(node, canvas.getEdgesForNode(node))
   })
+
+/**
+ * @since 1.0.0
+ * @category combinators
+ */
+export const childrenFromEdges = (
+  node: Canvas.CanvasNode,
+  edges: ReadonlyArray<Canvas.CanvasEdge>
+): ReadonlyArray<Canvas.CanvasNode> =>
+  pipe(
+    ReadonlyArray.filter(edges, (_) => _.from.node.id === node.id),
+    ReadonlyArray.map((_) => _.to.node),
+    ReadonlyArray.sort(yOrder)
+  )
 
 /**
  * @since 1.0.0

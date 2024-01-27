@@ -196,3 +196,26 @@ export const addCommandEditor = <R, E>(
         }
     )
   })
+
+/**
+ * @since 1.0.0
+ * @category accessors
+ */
+export const workspace: Effect.Effect<Plugin, never, Obsidian.Workspace> = Effect.map(
+  Plugin,
+  (_) => _.app.workspace
+)
+
+/**
+ * @since 1.0.0
+ * @category runtime
+ */
+export const runner = <Args extends ReadonlyArray<any>, R, E>(
+  f: (...args: Args) => Effect.Effect<R, E, void>
+): Effect.Effect<Scope.Scope | R, never, (...args: Args) => void> =>
+  Effect.gen(function*(_) {
+    const run = yield* _(FiberSet.makeRuntime<R>())
+    return (...args: Args) => {
+      run(f(...args))
+    }
+  })

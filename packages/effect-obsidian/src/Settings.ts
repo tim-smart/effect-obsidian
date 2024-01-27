@@ -5,6 +5,7 @@ import * as Schema from "@effect/schema/Schema"
 import * as Context from "effect/Context"
 import * as Effect from "effect/Effect"
 import * as Layer from "effect/Layer"
+import type * as Scope from "effect/Scope"
 import * as Stream from "effect/Stream"
 import * as SubscriptionRef from "effect/SubscriptionRef"
 import type * as Obsidian from "obsidian"
@@ -29,10 +30,14 @@ export const layer = <
   Tab extends new(app: Obsidian.App, plugin: Obsidian.Plugin) => Obsidian.PluginSettingTab
 >(
   schema: Schema.Schema<R, I, A>,
-  register: (update: (_: (_: A) => A) => Promise<void>) => Tab
+  register: (get: () => A, update: (_: (_: A) => A) => Promise<void>) => Tab
 ): {
   readonly tag: Context.Tag<Settings, SubscriptionRef.SubscriptionRef<A>>
   readonly layer: Layer.Layer<Plugin | R, never, Settings>
+  readonly runWhen: <R, E>(
+    f: (_: A) => boolean,
+    effect: Effect.Effect<R, E, void>
+  ) => Effect.Effect<Settings | Scope.Scope | R, never, void>
 } => {
   const tag = Context.Tag<Settings, SubscriptionRef.SubscriptionRef<A>>("effect-obsidian/Settings")
   const layer = Effect.gen(function*(_) {
@@ -53,7 +58,7 @@ export const layer = <
     )
 
     const update = (_: (_: A) => A) => Effect.runPromise(SubscriptionRef.update(ref, _))
-    const Class = register(update)
+    const Class = register(() => Effect.runSync(SubscriptionRef.get(ref)), update)
     plugin.addSettingTab(new Class(plugin.app, plugin))
 
     return ref
@@ -61,5 +66,16 @@ export const layer = <
     Layer.scoped(tag)
   )
 
-  return { tag, layer } as const
+  const runWhen = <R, E>(f: (_: A) => boolean, effect: Effect.Effect<R, E, void>) =>
+    Effect.gen(function*(_) {
+      const ref = yield* _(tag)
+      yield* _(
+        ref.changes,
+        Stream.flatMap((_) => f(_) ? Effect.ignoreLogged(effect) : Stream.empty, { switch: true }),
+        Stream.runDrain,
+        Effect.forkScoped
+      )
+    })
+
+  return { tag, layer, runWhen } as const
 }

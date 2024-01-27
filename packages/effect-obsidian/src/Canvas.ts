@@ -1,10 +1,11 @@
 /**
  * @since 1.0.0
  */
+import type { NoSuchElementException } from "effect/Cause"
 import * as Context from "effect/Context"
 import * as Effect from "effect/Effect"
 import { pipe } from "effect/Function"
-import type * as Option from "effect/Option"
+import * as Option from "effect/Option"
 import * as ReadonlyArray from "effect/ReadonlyArray"
 import * as Obsidian from "obsidian"
 import type { AllCanvasNodeData, CanvasData, NodeSide } from "obsidian/canvas.js"
@@ -57,6 +58,18 @@ export interface Canvas {
  * @category tags
  */
 export const Canvas = Context.Tag<Canvas>("effect-obsidian/Canvas")
+
+/**
+ * @since 1.0.0
+ * @category accessors
+ */
+export const get: Effect.Effect<Plugin.Plugin, NoSuchElementException, Canvas> = Effect.flatMap(
+  Plugin.Plugin,
+  (_) =>
+    Option.fromNullable(_.app.workspace.getActiveViewOfType(Obsidian.ItemView) as any).pipe(
+      Option.filter((_): _ is Canvas => _.getViewType() === "canvas")
+    )
+)
 
 /**
  * @since 1.0.0
