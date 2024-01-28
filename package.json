@@ -20,7 +20,8 @@
     "dtslint": "pnpm --recursive --parallel run dtslint",
     "dtslint-clean": "dtslint --installAll",
     "changeset-version": "changeset version",
-    "changeset-publish": "pnpm build && changeset publish"
+    "changeset-publish": "pnpm build && changeset publish",
+    "obsidian-version": "tsx scripts/update-manifests.ts"
   },
   "devDependencies": {
     "@babel/cli": "^7.23.4",

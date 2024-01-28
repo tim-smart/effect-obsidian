@@ -1,11 +1,10 @@
 {
-	"id": "canvas-mindmap",
-	"name": "Canvas Mindmap",
-	"version": "0.1.0",
-	"minAppVersion": "0.15.0",
-	"description": "This plugin extends the Obsidian Canvas.",
-	"author": "Obsidian",
-	"authorUrl": "https://obsidian.md",
-	"fundingUrl": "https://obsidian.md/pricing",
-	"isDesktopOnly": false
+  "id": "canvas-mindmap",
+  "name": "Canvas Mindmap",
+  "version": "0.0.0",
+  "minAppVersion": "0.15.0",
+  "description": "Make the Canvas work like a mindmap",
+  "author": "Tim Smart",
+  "authorUrl": "https://github.com/tim-smart",
+  "isDesktopOnly": false
 }
