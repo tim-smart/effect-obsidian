@@ -22,6 +22,7 @@ class NodeBlock {
 
   readonly height: number
 }
+
 const run = Effect.gen(function*(_) {
   const canvas = yield* _(Canvas.Canvas)
 
