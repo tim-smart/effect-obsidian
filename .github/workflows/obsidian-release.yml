@@ -35,7 +35,7 @@ jobs:
               echo "Releasing $name@$version"
               pnpm build
               gh repo clone "tim-smart/$name" tmp/repo
-              cp CHANGELOG.md dist/* tmp/repo/
+              cp CHANGELOG.md LICENSE dist/* tmp/repo/
               cd tmp/repo
               git add .
               git commit -m "Release $tag"
