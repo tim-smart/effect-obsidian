@@ -4,7 +4,7 @@ import * as Node from "effect-obsidian/Canvas/Node"
 
 export const NewNodeLive = Effect.all([
   Canvas.addCommand({
-    id: "canvas-mindmap/new-node",
+    id: "new-node",
     name: "New Node",
     hotkeys: [{ modifiers: ["Alt"], key: "Enter" }],
     run: Effect.gen(function*(_) {
@@ -37,7 +37,7 @@ export const NewNodeLive = Effect.all([
     }).pipe(Effect.catchAllCause(Effect.log))
   }),
   Canvas.addCommand({
-    id: "canvas-mindmap/new-child-node",
+    id: "new-child-node",
     name: "New Child Node",
     hotkeys: [{ modifiers: ["Alt"], key: "Tab" }],
     run: Effect.gen(function*(_) {

@@ -4,7 +4,7 @@ import * as Node from "effect-obsidian/Canvas/Node"
 
 export const NodeNavigationLive = Effect.all([
   Canvas.addCommand({
-    id: "canvas-mindmap/focus-down",
+    id: "focus-down",
     name: "Focus Down",
     hotkeys: [{ modifiers: ["Alt"], key: "ArrowDown" }],
     run: Effect.gen(function*(_) {
@@ -19,7 +19,7 @@ export const NodeNavigationLive = Effect.all([
     })
   }),
   Canvas.addCommand({
-    id: "canvas-mindmap/focus-up",
+    id: "focus-up",
     name: "Focus Up",
     hotkeys: [{ modifiers: ["Alt"], key: "ArrowUp" }],
     run: Effect.gen(function*(_) {
@@ -34,7 +34,7 @@ export const NodeNavigationLive = Effect.all([
     })
   }),
   Canvas.addCommand({
-    id: "canvas-mindmap/focus-left",
+    id: "focus-left",
     name: "Focus Left",
     hotkeys: [{ modifiers: ["Alt"], key: "ArrowLeft" }],
     run: Effect.gen(function*(_) {
@@ -46,7 +46,7 @@ export const NodeNavigationLive = Effect.all([
     })
   }),
   Canvas.addCommand({
-    id: "canvas-mindmap/focus-right",
+    id: "focus-right",
     name: "Focus Right",
     hotkeys: [{ modifiers: ["Alt"], key: "ArrowRight" }],
     run: Effect.gen(function*(_) {

@@ -85,7 +85,7 @@ const run = Effect.gen(function*(_) {
 
 export const AutoLayoutLive = Effect.all([
   Canvas.addCommand({
-    id: "canvas-mindmap/auto-layout",
+    id: "auto-layout",
     name: "Auto Layout",
     run
   }),
