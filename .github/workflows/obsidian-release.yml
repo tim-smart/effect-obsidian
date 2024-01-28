@@ -18,7 +18,7 @@ jobs:
       - run: pnpm obsidian-version
       - name: Create releases
         env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           for package in packages/*; do
             cd $package
