@@ -39,7 +39,8 @@ jobs:
               cd tmp/repo
               git add .
               git commit -m "Release $tag"
-              git push "https://tim-smart:${WRITE_TOKEN}@github.com/tim-smart/$name.git" HEAD:main
+              git tag "$tag"
+              git push --all "https://tim-smart:${WRITE_TOKEN}@github.com/tim-smart/$name.git" HEAD:main
               cd ../..
             else
               echo "No changes detected in $package"
