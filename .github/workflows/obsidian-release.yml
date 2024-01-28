@@ -18,6 +18,7 @@ jobs:
       - run: pnpm obsidian-version
       - name: Create releases
         env:
+          WRITE_TOKEN: ${{ secrets.WRITE_TOKEN }}
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         run: |
           git config --global user.name "github-actions[bot]"
@@ -38,7 +39,7 @@ jobs:
               cd tmp/repo
               git add .
               git commit -m "Release $tag"
-              git push
+              git push "https://tim-smart:${WRITE_TOKEN}@github.com/tim-smart/$name.git" HEAD:main
               cd ../..
             else
               echo "No changes detected in $package"
