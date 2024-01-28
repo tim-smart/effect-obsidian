@@ -1,7 +1,6 @@
-import { Effect, Layer, PubSub, ReadonlyArray } from "effect"
+import { Effect, Layer, ReadonlyArray } from "effect"
 import * as Canvas from "effect-obsidian/Canvas"
 import * as Node from "effect-obsidian/Canvas/Node"
-import { NewNodeHub, NewNodeHubLive } from "./NewNode.js"
 import * as Settings from "./Settings.js"
 
 class NodeBlock {
@@ -71,25 +70,10 @@ export const AutoLayoutLive = Effect.all([
     run
   }),
   Settings.runWhen(
-    (_) => _.autoLayoutOnInsert,
-    Effect.gen(function*(_) {
-      const hub = yield* _(NewNodeHub)
-      const sub = yield* _(PubSub.subscribe(hub))
-      yield* _(
-        sub.take,
-        Effect.flatMap((_) =>
-          Effect.provideService(
-            run,
-            Canvas.Canvas,
-            _.canvas
-          )
-        ),
-        Effect.forever
-      )
-    })
+    (_) => _.autoLayoutOnChange,
+    Canvas.onNodeChanges(run)
   )
 ]).pipe(
   Layer.scopedDiscard,
-  Layer.provide(NewNodeHubLive),
   Layer.provide(Settings.layer)
 )

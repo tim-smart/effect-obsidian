@@ -8,7 +8,7 @@ export const {
   tag
 } = Settings.layer(
   Schema.struct({
-    autoLayoutOnInsert: Schema.optional(Schema.boolean, { default: () => false })
+    autoLayoutOnChange: Schema.optional(Schema.boolean, { default: () => false })
   }),
   (get, update) =>
     class SettingsTab extends PluginSettingTab {
@@ -16,15 +16,15 @@ export const {
         this.containerEl.empty()
         const current = get()
         new Setting(this.containerEl)
-          .setName("Auto Layout on Insert")
-          .setDesc("Trigger auto layout when inserting a new node")
+          .setName("Auto Layout on Change")
+          .setDesc("Trigger auto layout on card changes")
           .addToggle((toggle) =>
             toggle
-              .setValue(current.autoLayoutOnInsert)
+              .setValue(current.autoLayoutOnChange)
               .onChange((value) =>
                 update((_) => ({
                   ..._,
-                  autoLayoutOnInsert: value
+                  autoLayoutOnChange: value
                 }))
               )
           )

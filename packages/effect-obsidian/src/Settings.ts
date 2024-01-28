@@ -4,6 +4,7 @@
 import * as Schema from "@effect/schema/Schema"
 import * as Context from "effect/Context"
 import * as Effect from "effect/Effect"
+import * as FiberMap from "effect/FiberMap"
 import * as Layer from "effect/Layer"
 import type * as Scope from "effect/Scope"
 import * as Stream from "effect/Stream"
@@ -37,7 +38,7 @@ export const layer = <
   readonly runWhen: <R, E>(
     f: (_: A) => boolean,
     effect: Effect.Effect<R, E, void>
-  ) => Effect.Effect<Settings | Scope.Scope | R, never, void>
+  ) => Effect.Effect<Settings | Scope.Scope | Exclude<R, Scope.Scope>, never, void>
 } => {
   const tag = Context.Tag<Settings, SubscriptionRef.SubscriptionRef<A>>("effect-obsidian/Settings")
   const layer = Effect.gen(function*(_) {
@@ -66,12 +67,25 @@ export const layer = <
     Layer.scoped(tag)
   )
 
-  const runWhen = <R, E>(f: (_: A) => boolean, effect: Effect.Effect<R, E, void>) =>
+  const runWhen = <R, E>(
+    f: (_: A) => boolean,
+    effect: Effect.Effect<R, E, void>
+  ): Effect.Effect<Settings | Scope.Scope | Exclude<R, Scope.Scope>, never, void> =>
     Effect.gen(function*(_) {
       const ref = yield* _(tag)
+      const map = yield* _(FiberMap.make<string>())
       yield* _(
         ref.changes,
-        Stream.flatMap((_) => f(_) ? Effect.ignoreLogged(effect) : Stream.empty, { switch: true }),
+        Stream.mapEffect(
+          (_): Effect.Effect<Exclude<R, Scope.Scope>, never, void> =>
+            f(_) ?
+              effect.pipe(
+                Effect.zipRight(Effect.never),
+                Effect.scoped,
+                FiberMap.run(map, "fiber")
+              ) :
+              FiberMap.clear(map)
+        ),
         Stream.runDrain,
         Effect.forkScoped
       )

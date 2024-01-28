@@ -1,9 +1,9 @@
 /**
  * @since 1.0.0
  */
-import type { NoSuchElementException } from "effect/Cause"
 import * as Context from "effect/Context"
 import * as Effect from "effect/Effect"
+import * as FiberSet from "effect/FiberSet"
 import { pipe } from "effect/Function"
 import * as Option from "effect/Option"
 import * as ReadonlyArray from "effect/ReadonlyArray"
@@ -66,12 +66,15 @@ export const Canvas = Context.Tag<Canvas>("effect-obsidian/Canvas")
  * @since 1.0.0
  * @category accessors
  */
-export const get: Effect.Effect<Plugin.Plugin, NoSuchElementException, Canvas> = Effect.flatMap(
+export const get: Effect.Effect<Plugin.Plugin, never, Option.Option<Canvas>> = Effect.map(
   Plugin.Plugin,
   (_) =>
     Option.fromNullable(
       _.app.workspace.getActiveViewOfType(Obsidian.ItemView) as any
-    ).pipe(Option.filter((_): _ is Canvas => _.getViewType() === "canvas"))
+    ).pipe(
+      Option.filter((_) => _.getViewType() === "canvas"),
+      Option.map((_) => _.canvas as Canvas)
+    )
 )
 
 /**
@@ -142,18 +145,53 @@ export const selectedNode: Effect.Effect<
  * @since 1.0.0
  * @category ops
  */
+export const onActive = <R, E>(
+  effect: Effect.Effect<R, E, void>
+): Effect.Effect<Plugin.Plugin | Scope.Scope | Exclude<Exclude<R, Scope.Scope>, Canvas>, never, void> =>
+  Effect.gen(function*(_) {
+    const set = yield* _(FiberSet.make())
+    yield* _(
+      get,
+      Effect.zip(FiberSet.size(set)),
+      Effect.flatMap(([_, size]) =>
+        Option.match(_, {
+          onNone: () => size > 0 ? FiberSet.clear(set) : Effect.unit,
+          onSome: (canvas) =>
+            size === 0 ?
+              effect.pipe(
+                Effect.zipRight(Effect.never),
+                Effect.scoped,
+                Effect.provideService(Canvas, canvas),
+                FiberSet.run(set)
+              ) :
+              Effect.unit
+        })
+      ),
+      Effect.schedule(Schedule.spaced(2000)),
+      Effect.forkScoped
+    )
+  })
+
+/**
+ * @since 1.0.0
+ * @category ops
+ */
 export const onNodeChanges = <R, E>(
   effect: Effect.Effect<R, E, void>
-): Effect.Effect<Canvas | R, E, void> =>
-  get.pipe(
-    Effect.sync(() => canvas.getData().nodes.length),
-    Stream.repeatEffect,
-    Stream.schedule(Schedule.spaced(250)),
-    Stream.changes,
-    Stream.drop(1),
-    Stream.mapEffect(() => Effect.ignoreLogged(effect)),
-    Stream.runDrain
-  )
+): Effect.Effect<Plugin.Plugin | Scope.Scope | Exclude<R, Canvas>, never, void> =>
+  onActive(Effect.gen(function*(_) {
+    const canvas = yield* _(Canvas)
+    yield* _(
+      Effect.sync(() => canvas.getData().nodes.length),
+      Stream.repeatEffect,
+      Stream.schedule(Schedule.spaced(50)),
+      Stream.changes,
+      Stream.drop(1),
+      Stream.mapEffect((_) => Effect.ignoreLogged(effect)),
+      Stream.runDrain,
+      Effect.forkScoped
+    )
+  }))
 
 /**
  * @since 1.0.0
