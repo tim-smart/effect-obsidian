@@ -40,7 +40,7 @@ jobs:
               git add .
               git commit -m "Release $tag"
               git tag "$tag"
-              git push --all "https://tim-smart:${WRITE_TOKEN}@github.com/tim-smart/$name.git" HEAD:main
+              git push --follow-tags "https://tim-smart:${WRITE_TOKEN}@github.com/tim-smart/$name.git" HEAD:main
               cd ../..
             else
               echo "No changes detected in $package"
