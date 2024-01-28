@@ -25,10 +25,20 @@ jobs:
             changed=$(git diff --quiet -- . || echo "true")
 
             if [ "$changed" = "true" ]; then
-              echo "Changes detected in $package"
+              basename=$(basename $package)
+              version=$(cat package.json | jq -r .version)
+              tag="$basename@$version"
+              echo "Releasing $basename@$version"
+              pnpm build
+              gh release create "$tag" --title "$tag" dist/*
             else
               echo "No changes detected in $package"
             fi
 
             cd ../..
           done
+      - name: Commit & Push changes
+        uses: actions-js/push@master
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          message: "release obsidian plugins"
