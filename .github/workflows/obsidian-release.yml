@@ -33,7 +33,6 @@ jobs:
               gh repo clone "tim-smart/$name" tmp/repo
               cp dist/* tmp/repo/
               cd tmp/repo
-              gh release create "$tag" --title "$tag" ./*
               git add .
               git commit -m "Release $tag"
               git push
