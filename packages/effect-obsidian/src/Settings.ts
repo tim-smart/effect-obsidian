@@ -28,7 +28,10 @@ export const layer = <
   R,
   I,
   A,
-  Tab extends new(app: Obsidian.App, plugin: Obsidian.Plugin) => Obsidian.PluginSettingTab
+  Tab extends new(
+    app: Obsidian.App,
+    plugin: Obsidian.Plugin
+  ) => Obsidian.PluginSettingTab
 >(
   schema: Schema.Schema<R, I, A>,
   register: (get: () => A, update: (_: (_: A) => A) => Promise<void>) => Tab
@@ -38,9 +41,15 @@ export const layer = <
   readonly runWhen: <R, E>(
     f: (_: A) => boolean,
     effect: Effect.Effect<R, E, void>
-  ) => Effect.Effect<Settings | Scope.Scope | Exclude<R, Scope.Scope>, never, void>
+  ) => Effect.Effect<
+    Settings | Scope.Scope | Exclude<R, Scope.Scope>,
+    never,
+    void
+  >
 } => {
-  const tag = Context.Tag<Settings, SubscriptionRef.SubscriptionRef<A>>("effect-obsidian/Settings")
+  const tag = Context.Tag<Settings, SubscriptionRef.SubscriptionRef<A>>(
+    "effect-obsidian/Settings"
+  )
   const layer = Effect.gen(function*(_) {
     const plugin = yield* _(Plugin)
     const data = yield* _(
@@ -58,8 +67,12 @@ export const layer = <
       Effect.forkScoped
     )
 
-    const update = (_: (_: A) => A) => Effect.runPromise(SubscriptionRef.update(ref, _))
-    const Class = register(() => Effect.runSync(SubscriptionRef.get(ref)), update)
+    const update = (_: (_: A) => A) =>
+      Effect.runPromise(SubscriptionRef.update(ref, _))
+    const Class = register(
+      () => Effect.runSync(SubscriptionRef.get(ref)),
+      update
+    )
     plugin.addSettingTab(new Class(plugin.app, plugin))
 
     return ref
@@ -70,7 +83,11 @@ export const layer = <
   const runWhen = <R, E>(
     f: (_: A) => boolean,
     effect: Effect.Effect<R, E, void>
-  ): Effect.Effect<Settings | Scope.Scope | Exclude<R, Scope.Scope>, never, void> =>
+  ): Effect.Effect<
+    Settings | Scope.Scope | Exclude<R, Scope.Scope>,
+    never,
+    void
+  > =>
     Effect.gen(function*(_) {
       const ref = yield* _(tag)
       const map = yield* _(FiberMap.make<string>())

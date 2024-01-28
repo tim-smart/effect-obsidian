@@ -52,7 +52,10 @@ export const NodeNavigationLive = Effect.all([
     run: Effect.gen(function*(_) {
       const canvas = yield* _(Canvas.Canvas)
       const node = yield* _(Canvas.selectedNode, Effect.flatten)
-      const child = yield* _(Node.children(node), Effect.flatMap(ReadonlyArray.head))
+      const child = yield* _(
+        Node.children(node),
+        Effect.flatMap(ReadonlyArray.head)
+      )
       canvas.selectOnly(child)
       canvas.zoomToSelection()
     })

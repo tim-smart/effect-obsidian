@@ -2,7 +2,7 @@
  * @since 1.0.0
  */
 import * as Effect from "effect/Effect"
-import { pipe } from "effect/Function"
+import { identity, pipe } from "effect/Function"
 import * as Option from "effect/Option"
 import * as Order from "effect/Order"
 import * as ReadonlyArray from "effect/ReadonlyArray"
@@ -50,10 +50,16 @@ export const children = (
  */
 export const childrenFromEdges = (
   node: Canvas.CanvasNode,
-  edges: ReadonlyArray<Canvas.CanvasEdge>
+  edges: ReadonlyArray<Canvas.CanvasEdge>,
+  leftToRight = false
 ): ReadonlyArray<Canvas.CanvasNode> =>
   pipe(
     ReadonlyArray.filter(edges, (_) => _.from.node.id === node.id),
+    leftToRight
+      ? ReadonlyArray.filter((_) =>
+        _.from.side === "right" && _.to.side === "left"
+      )
+      : identity,
     ReadonlyArray.map((_) => _.to.node),
     ReadonlyArray.sort(yOrder)
   )

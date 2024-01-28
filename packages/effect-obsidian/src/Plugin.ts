@@ -22,7 +22,10 @@ export interface Plugin {
  * @since 1.0.0
  * @category tags
  */
-export const Plugin: Context.Tag<Plugin, Obsidian.Plugin> = Context.Tag<Plugin, Obsidian.Plugin>(
+export const Plugin: Context.Tag<Plugin, Obsidian.Plugin> = Context.Tag<
+  Plugin,
+  Obsidian.Plugin
+>(
   "effect-obsidian/Plugin"
 )
 
@@ -54,7 +57,10 @@ export interface MarkdownView {
  * @since 1.0.0
  * @category tags
  */
-export const MarkdownView = Context.Tag<MarkdownView, Obsidian.MarkdownView | Obsidian.MarkdownFileInfo>(
+export const MarkdownView = Context.Tag<
+  MarkdownView,
+  Obsidian.MarkdownView | Obsidian.MarkdownFileInfo
+>(
   "effect-obsidian/Plugin/MarkdownView"
 )
 
@@ -62,7 +68,9 @@ export const MarkdownView = Context.Tag<MarkdownView, Obsidian.MarkdownView | Ob
  * @since 1.0.0
  * @category classes
  */
-export const Class = <E, A>(layer: Layer.Layer<Plugin, E, A>): typeof Obsidian.Plugin =>
+export const Class = <E, A>(
+  layer: Layer.Layer<Plugin, E, A>
+): typeof Obsidian.Plugin =>
   class extends EffectClass<E> {
     run(): Effect.Effect<Plugin | Scope.Scope, E, void> {
       return Layer.build(layer)
@@ -109,8 +117,11 @@ export abstract class EffectClass<E> extends Obsidian.Plugin {
  * @since 1.0.0
  * @category commands
  */
-export interface BaseCommand
-  extends Omit<Obsidian.Command, "callback" | "checkCallback" | "editorCallback" | "editorCheckCallback">
+export interface BaseCommand extends
+  Omit<
+    Obsidian.Command,
+    "callback" | "checkCallback" | "editorCallback" | "editorCheckCallback"
+  >
 {}
 
 /**
@@ -126,7 +137,9 @@ export interface Command<R, E> extends BaseCommand {
  * @since 1.0.0
  * @category commands
  */
-export const addCommand = <R, E>(command: Command<R, E>): Effect.Effect<R | Plugin | Scope.Scope, never, void> =>
+export const addCommand = <R, E>(
+  command: Command<R, E>
+): Effect.Effect<R | Plugin | Scope.Scope, never, void> =>
   Effect.gen(function*(_) {
     const plugin = yield* _(Plugin)
     const runtime = yield* _(Effect.runtime<R>())
@@ -160,11 +173,19 @@ export const addCommand = <R, E>(command: Command<R, E>): Effect.Effect<R | Plug
  */
 export const addCommandEditor = <R, E>(
   command: Command<R, E>
-): Effect.Effect<Exclude<Exclude<R, Editor>, MarkdownView> | Plugin | Scope.Scope, never, void> =>
+): Effect.Effect<
+  Exclude<Exclude<R, Editor>, MarkdownView> | Plugin | Scope.Scope,
+  never,
+  void
+> =>
   Effect.gen(function*(_) {
     const plugin = yield* _(Plugin)
-    const runtime = yield* _(Effect.runtime<Exclude<Exclude<R, Editor>, MarkdownView>>())
-    const run = yield* _(FiberSet.makeRuntime<Exclude<Exclude<R, Editor>, MarkdownView>>())
+    const runtime = yield* _(
+      Effect.runtime<Exclude<Exclude<R, Editor>, MarkdownView>>()
+    )
+    const run = yield* _(
+      FiberSet.makeRuntime<Exclude<Exclude<R, Editor>, MarkdownView>>()
+    )
     const runSync = Runtime.runSync(runtime)
 
     plugin.addCommand(
@@ -201,10 +222,11 @@ export const addCommandEditor = <R, E>(
  * @since 1.0.0
  * @category accessors
  */
-export const workspace: Effect.Effect<Plugin, never, Obsidian.Workspace> = Effect.map(
-  Plugin,
-  (_) => _.app.workspace
-)
+export const workspace: Effect.Effect<Plugin, never, Obsidian.Workspace> =
+  Effect.map(
+    Plugin,
+    (_) => _.app.workspace
+  )
 
 /**
  * @since 1.0.0

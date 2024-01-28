@@ -28,15 +28,24 @@ const run = Effect.gen(function*(_) {
   // root nodes
   const roots: Array<Canvas.CanvasNode> = []
   canvas.nodes.forEach((node) => {
-    const isRoot = !canvas.getEdgesForNode(node).some((_) => _.to.node.id === node.id)
+    const isRoot = !canvas.getEdgesForNode(node).some((_) =>
+      _.to.node.id === node.id
+    )
     if (isRoot) {
       roots.push(node)
     }
   })
   roots.sort(Node.yOrder)
 
-  function createBlock(node: Canvas.CanvasNode, targetWidth: number): NodeBlock {
-    const children = Node.childrenFromEdges(node, canvas.getEdgesForNode(node))
+  function createBlock(
+    node: Canvas.CanvasNode,
+    targetWidth: number
+  ): NodeBlock {
+    const children = Node.childrenFromEdges(
+      node,
+      canvas.getEdgesForNode(node),
+      true
+    )
     const childTargetWidth = Math.max(...children.map((_) => _.width))
     const childBlocks = children.map((_) => createBlock(_, childTargetWidth))
     return new NodeBlock(node, childBlocks, targetWidth)
@@ -45,7 +54,12 @@ const run = Effect.gen(function*(_) {
   const rootTargetWidth = Math.max(...roots.map((_) => _.width))
   const rootBlocks = roots.map((_) => createBlock(_, rootTargetWidth))
 
-  function layoutBlocks(blocks: ReadonlyArray<NodeBlock>, x?: number, y?: number, gap = 100): void {
+  function layoutBlocks(
+    blocks: ReadonlyArray<NodeBlock>,
+    x?: number,
+    y?: number,
+    gap = 100
+  ): void {
     if (ReadonlyArray.isEmptyReadonlyArray(blocks)) {
       return
     }
@@ -54,7 +68,12 @@ const run = Effect.gen(function*(_) {
 
     blocks.forEach((block) => {
       block.node.moveTo({ x: currentX, y: currentY })
-      layoutBlocks(block.children, currentX + block.targetWidth + 200, currentY, 20)
+      layoutBlocks(
+        block.children,
+        currentX + block.targetWidth + 200,
+        currentY,
+        20
+      )
       currentY += block.height + gap
     })
   }

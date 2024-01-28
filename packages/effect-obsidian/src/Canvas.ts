@@ -11,7 +11,11 @@ import * as Schedule from "effect/Schedule"
 import type * as Scope from "effect/Scope"
 import * as Stream from "effect/Stream"
 import * as Obsidian from "obsidian"
-import type { AllCanvasNodeData, CanvasData, NodeSide } from "obsidian/canvas.js"
+import type {
+  AllCanvasNodeData,
+  CanvasData,
+  NodeSide
+} from "obsidian/canvas.js"
 import * as Identifier from "./Identifier.js"
 import * as Plugin from "./Plugin.js"
 
@@ -66,16 +70,17 @@ export const Canvas = Context.Tag<Canvas>("effect-obsidian/Canvas")
  * @since 1.0.0
  * @category accessors
  */
-export const get: Effect.Effect<Plugin.Plugin, never, Option.Option<Canvas>> = Effect.map(
-  Plugin.Plugin,
-  (_) =>
-    Option.fromNullable(
-      _.app.workspace.getActiveViewOfType(Obsidian.ItemView) as any
-    ).pipe(
-      Option.filter((_) => _.getViewType() === "canvas"),
-      Option.map((_) => _.canvas as Canvas)
-    )
-)
+export const get: Effect.Effect<Plugin.Plugin, never, Option.Option<Canvas>> =
+  Effect.map(
+    Plugin.Plugin,
+    (_) =>
+      Option.fromNullable(
+        _.app.workspace.getActiveViewOfType(Obsidian.ItemView) as any
+      ).pipe(
+        Option.filter((_) => _.getViewType() === "canvas"),
+        Option.map((_) => _.canvas as Canvas)
+      )
+  )
 
 /**
  * @since 1.0.0
@@ -147,7 +152,11 @@ export const selectedNode: Effect.Effect<
  */
 export const onActive = <R, E>(
   effect: Effect.Effect<R, E, void>
-): Effect.Effect<Plugin.Plugin | Scope.Scope | Exclude<Exclude<R, Scope.Scope>, Canvas>, never, void> =>
+): Effect.Effect<
+  Plugin.Plugin | Scope.Scope | Exclude<Exclude<R, Scope.Scope>, Canvas>,
+  never,
+  void
+> =>
   Effect.gen(function*(_) {
     const set = yield* _(FiberSet.make())
     yield* _(
@@ -178,7 +187,11 @@ export const onActive = <R, E>(
  */
 export const onNodeChanges = <R, E>(
   effect: Effect.Effect<R, E, void>
-): Effect.Effect<Plugin.Plugin | Scope.Scope | Exclude<R, Canvas>, never, void> =>
+): Effect.Effect<
+  Plugin.Plugin | Scope.Scope | Exclude<R, Canvas>,
+  never,
+  void
+> =>
   onActive(Effect.gen(function*(_) {
     const canvas = yield* _(Canvas)
     yield* _(
@@ -328,6 +341,7 @@ export interface CanvasEdge {
   }
 
   from: {
+    side: "left" | "right" | "top" | "bottom"
     node: CanvasNode
   }
 

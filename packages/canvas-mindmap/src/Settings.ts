@@ -8,7 +8,9 @@ export const {
   tag
 } = Settings.layer(
   Schema.struct({
-    autoLayoutOnChange: Schema.optional(Schema.boolean, { default: () => false })
+    autoLayoutOnChange: Schema.optional(Schema.boolean, {
+      default: () => false
+    })
   }),
   (get, update) =>
     class SettingsTab extends PluginSettingTab {
