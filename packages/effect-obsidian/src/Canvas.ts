@@ -7,6 +7,9 @@ import * as Effect from "effect/Effect"
 import { pipe } from "effect/Function"
 import * as Option from "effect/Option"
 import * as ReadonlyArray from "effect/ReadonlyArray"
+import * as Schedule from "effect/Schedule"
+import type * as Scope from "effect/Scope"
+import * as Stream from "effect/Stream"
 import * as Obsidian from "obsidian"
 import type { AllCanvasNodeData, CanvasData, NodeSide } from "obsidian/canvas.js"
 import * as Identifier from "./Identifier.js"
@@ -66,9 +69,9 @@ export const Canvas = Context.Tag<Canvas>("effect-obsidian/Canvas")
 export const get: Effect.Effect<Plugin.Plugin, NoSuchElementException, Canvas> = Effect.flatMap(
   Plugin.Plugin,
   (_) =>
-    Option.fromNullable(_.app.workspace.getActiveViewOfType(Obsidian.ItemView) as any).pipe(
-      Option.filter((_): _ is Canvas => _.getViewType() === "canvas")
-    )
+    Option.fromNullable(
+      _.app.workspace.getActiveViewOfType(Obsidian.ItemView) as any
+    ).pipe(Option.filter((_): _ is Canvas => _.getViewType() === "canvas"))
 )
 
 /**
@@ -78,23 +81,21 @@ export const get: Effect.Effect<Plugin.Plugin, NoSuchElementException, Canvas> =
 export const addCommand = <R, E>(command: Plugin.Command<R, E>) =>
   Plugin.addCommand<Exclude<R, Canvas> | Plugin.Plugin, E>({
     ...command,
-    check: Effect.flatMap(
-      Plugin.Plugin,
-      (plugin) => {
-        const view = plugin.app.workspace.getActiveViewOfType(Obsidian.ItemView)
-        const isCanvas = view?.getViewType() === "canvas"
-        return isCanvas && command.check
-          ? Effect.provideService(command.check, Canvas, (view as any).canvas)
-          : Effect.succeed(isCanvas)
-      }
-    ),
-    run: Effect.flatMap(
-      Plugin.Plugin,
-      (plugin) =>
-        command.run.pipe(
-          Effect.provideService(Canvas, (plugin.app.workspace.getActiveViewOfType(Obsidian.ItemView) as any).canvas)
+    check: Effect.flatMap(Plugin.Plugin, (plugin) => {
+      const view = plugin.app.workspace.getActiveViewOfType(Obsidian.ItemView)
+      const isCanvas = view?.getViewType() === "canvas"
+      return isCanvas && command.check
+        ? Effect.provideService(command.check, Canvas, (view as any).canvas)
+        : Effect.succeed(isCanvas)
+    }),
+    run: Effect.flatMap(Plugin.Plugin, (plugin) =>
+      command.run.pipe(
+        Effect.provideService(
+          Canvas,
+          (plugin.app.workspace.getActiveViewOfType(Obsidian.ItemView) as any)
+            .canvas
         )
-    )
+      ))
   })
 
 /**
@@ -107,34 +108,52 @@ export const createEdge = (options: {
   readonly to: CanvasNode
   readonly toSide?: NodeSide
 }): Effect.Effect<Canvas, never, void> =>
-  Effect.andThen(
-    Canvas,
-    (canvas) => {
-      const data = canvas.getData()
-      canvas.importData({
-        edges: [...data.edges, {
+  Effect.andThen(Canvas, (canvas) => {
+    const data = canvas.getData()
+    canvas.importData({
+      edges: [
+        ...data.edges,
+        {
           id: Identifier.make(),
           fromNode: options.from.id,
           fromSide: options.fromSide ?? "right",
           toNode: options.to.id,
           toSide: options.toSide ?? "left"
-        }],
-        nodes: data.nodes
-      })
-    }
-  )
+        }
+      ],
+      nodes: data.nodes
+    })
+  })
 
 /**
  * @since 1.0.0
  * @category ops
  */
-export const selectedNode: Effect.Effect<Canvas, never, Option.Option<CanvasNode>> = Effect.gen(function*(_) {
+export const selectedNode: Effect.Effect<
+  Canvas,
+  never,
+  Option.Option<CanvasNode>
+> = Effect.gen(function*(_) {
   const canvas = yield* _(Canvas)
-  return pipe(
-    ReadonlyArray.fromIterable(canvas.selection),
-    ReadonlyArray.head
-  )
+  return pipe(ReadonlyArray.fromIterable(canvas.selection), ReadonlyArray.head)
 })
+
+/**
+ * @since 1.0.0
+ * @category ops
+ */
+export const onNodeChanges = <R, E>(
+  effect: Effect.Effect<R, E, void>
+): Effect.Effect<Canvas | R, E, void> =>
+  get.pipe(
+    Effect.sync(() => canvas.getData().nodes.length),
+    Stream.repeatEffect,
+    Stream.schedule(Schedule.spaced(250)),
+    Stream.changes,
+    Stream.drop(1),
+    Stream.mapEffect(() => Effect.ignoreLogged(effect)),
+    Stream.runDrain
+  )
 
 /**
  * @since 1.0.0
