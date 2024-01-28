@@ -25,12 +25,19 @@ jobs:
             changed=$(git diff --quiet -- . || echo "true")
 
             if [ "$changed" = "true" ]; then
-              basename=$(basename $package)
+              name=$(cat package.json | jq -r .name)
               version=$(cat package.json | jq -r .version)
-              tag="$basename@$version"
-              echo "Releasing $basename@$version"
+              tag="$version"
+              echo "Releasing $name@$version"
               pnpm build
-              gh release create "$tag" --title "$tag" dist/*
+              gh repo clone "tim-smart/$name" tmp/repo
+              cp dist/* tmp/repo/
+              cd tmp/repo
+              gh release create "$tag" --title "$tag" ./*
+              git add .
+              git commit -m "Release $tag"
+              git push
+              cd ../..
             else
               echo "No changes detected in $package"
             fi
