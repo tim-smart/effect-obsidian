@@ -18,7 +18,7 @@ export const {
         this.containerEl.empty()
         const current = get()
         new Setting(this.containerEl)
-          .setName("Auto Layout on Change")
+          .setName("Auto layout on changes")
           .setDesc("Trigger auto layout on card changes")
           .addToggle((toggle) =>
             toggle
