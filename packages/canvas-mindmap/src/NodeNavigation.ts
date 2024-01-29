@@ -10,12 +10,12 @@ export const NodeNavigationLive = Effect.all([
     run: Effect.gen(function*(_) {
       const canvas = yield* _(Canvas.Canvas)
       const node = yield* _(Canvas.selectedNode, Effect.flatten)
-      const siblings = yield* _(Node.siblings(node))
-      const [, below] = ReadonlyArray.partition(siblings, (_) => _.y > node.y)
-      if (below.length > 0) {
-        canvas.selectOnly(below[0])
-        canvas.zoomToSelection()
-      }
+      const nextNode = yield* _(
+        Node.siblings(node),
+        Effect.flatMap(ReadonlyArray.findFirst((_) => _.y > node.y))
+      )
+      canvas.selectOnly(nextNode)
+      canvas.panIntoView(nextNode.getBBox())
     })
   }),
   Canvas.addCommand({
@@ -25,12 +25,12 @@ export const NodeNavigationLive = Effect.all([
     run: Effect.gen(function*(_) {
       const canvas = yield* _(Canvas.Canvas)
       const node = yield* _(Canvas.selectedNode, Effect.flatten)
-      const siblings = yield* _(Node.siblings(node))
-      const [, above] = ReadonlyArray.partition(siblings, (_) => _.y < node.y)
-      if (above.length > 0) {
-        canvas.selectOnly(above[above.length - 1])
-        canvas.zoomToSelection()
-      }
+      const nextNode = yield* _(
+        Node.siblings(node),
+        Effect.flatMap(ReadonlyArray.findLast((_) => _.y < node.y))
+      )
+      canvas.selectOnly(nextNode)
+      canvas.panIntoView(nextNode.getBBox())
     })
   }),
   Canvas.addCommand({
@@ -42,7 +42,7 @@ export const NodeNavigationLive = Effect.all([
       const node = yield* _(Canvas.selectedNode, Effect.flatten)
       const parent = yield* _(Node.parent(node), Effect.flatten)
       canvas.selectOnly(parent)
-      canvas.zoomToSelection()
+      canvas.panIntoView(parent.getBBox())
     })
   }),
   Canvas.addCommand({
@@ -57,7 +57,7 @@ export const NodeNavigationLive = Effect.all([
         Effect.flatMap(ReadonlyArray.head)
       )
       canvas.selectOnly(child)
-      canvas.zoomToSelection()
+      canvas.panIntoView(child.getBBox())
     })
   })
 ]).pipe(Layer.scopedDiscard)
