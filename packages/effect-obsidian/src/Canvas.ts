@@ -47,16 +47,18 @@ export interface Canvas {
   history: any
   requestPushHistory: any
   nodeIndex: any
-  importData(data: CanvasData): void
-  requestSave(save?: boolean, triggerBySelf?: boolean): void
-  getEdgesForNode(node: CanvasNode): Array<CanvasEdge>
-  getContainingNodes(coords: CanvasCoords): Array<CanvasNode>
+
   deselectAll(): void
-  select(nodes: CanvasNode): void
-  requestFrame(): void
+  getContainingNodes(coords: BBox): Array<CanvasNode>
+  getEdgesForNode(node: CanvasNode): Array<CanvasEdge>
   getViewportNodes(): Array<CanvasNode>
-  selectOnly(nodes: CanvasNode): void
+  importData(data: CanvasData): void
+  panTo(x: number, y: number): void
+  panIntoView(bbox: BBox): void
+  requestFrame(): void
   requestSave(save?: boolean, triggerBySelf?: boolean): void
+  select(nodes: CanvasNode): void
+  selectOnly(nodes: CanvasNode): void
   zoomToSelection(): void
 }
 
@@ -229,7 +231,7 @@ export interface CanvasSelection {
   selectionEl: HTMLElement
   resizerEls: HTMLElement
   canvas: Canvas
-  bbox: CanvasCoords | undefined
+  bbox: BBox | undefined
 
   render(): void
 
@@ -237,7 +239,7 @@ export interface CanvasSelection {
 
   onResizePointerDown(e: PointerEvent, direction: CanvasDirection): void
 
-  update(bbox: CanvasCoords): void
+  update(bbox: BBox): void
 }
 
 /**
@@ -266,7 +268,7 @@ export interface CanvasNode {
   width: number
   height: number
   zIndex: number
-  bbox: CanvasCoords
+  bbox: BBox
   unknownData: CanvasNodeUnknownData
   renderedZIndex: number
   color: string
@@ -281,7 +283,7 @@ export interface CanvasNode {
   canvas: Canvas
   app: Obsidian.App
 
-  getBBox(containing?: boolean): CanvasCoords
+  getBBox(containing?: boolean): BBox
   getData: () => AllCanvasNodeData
   moveTo({ x, y }: { x: number; y: number }): void
   setColor: (color: string) => void
@@ -351,7 +353,7 @@ export interface CanvasEdge {
   }
 
   canvas: Canvas
-  bbox: CanvasCoords
+  bbox: BBox
 
   unknownData: CanvasNodeUnknownData
 }
@@ -370,7 +372,7 @@ export interface CanvasNodeUnknownData {
  * @since 1.0.0
  * @category models
  */
-export interface CanvasCoords {
+export interface BBox {
   maxX: number
   maxY: number
   minX: number
