@@ -33,7 +33,7 @@ export const NewNodeLive = Effect.all([
       }
 
       canvas.requestSave()
-      canvas.panTo(newNode.x, newNode.y)
+      canvas.panIntoView(newNode.getBBox())
     }).pipe(Effect.catchAllCause(Effect.log))
   }),
   Canvas.addCommand({
@@ -73,7 +73,7 @@ export const NewNodeLive = Effect.all([
       )
 
       canvas.requestSave()
-      canvas.panTo(newNode.x, newNode.y)
+      canvas.panIntoView(newNode.getBBox())
     }).pipe(Effect.catchAllCause(Effect.log))
   })
 ]).pipe(
