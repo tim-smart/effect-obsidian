@@ -1,5 +1,5 @@
 import { Schema } from "@effect/schema"
-import { Effect, HashMap, Option } from "effect"
+import { Effect, Option, ReadonlyRecord } from "effect"
 import * as Settings from "effect-obsidian/Settings"
 import { PluginSettingTab, Setting } from "obsidian"
 
@@ -14,8 +14,8 @@ export const {
       default: () => false
     }),
     autoLayoutEnabledFor: Schema.optional(
-      Schema.hashMap(Schema.string, Schema.boolean),
-      { default: () => HashMap.empty() }
+      Schema.record(Schema.string, Schema.boolean),
+      { default: () => ReadonlyRecord.empty() }
     )
   }),
   (get, update) =>
@@ -48,12 +48,12 @@ export const autoLayout = Effect.gen(function*(_) {
     (path: string) => {
       const current = settings.unsafeGet()
       return Option.getOrElse(
-        HashMap.get(current.autoLayoutEnabledFor, path),
+        ReadonlyRecord.get(current.autoLayoutEnabledFor, path),
         () => current.autoLayoutDefault
       )
     },
     (path: string, value: boolean) => {
-      return update(HashMap.set(path, value))
+      return update(ReadonlyRecord.upsert(path, value))
     },
     update
   ] as const

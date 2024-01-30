@@ -1,4 +1,11 @@
-import { Effect, HashMap, Layer, ReadonlyArray, Stream } from "effect"
+import {
+  Effect,
+  Layer,
+  Option,
+  ReadonlyArray,
+  ReadonlyRecord,
+  Stream
+} from "effect"
 import * as Canvas from "effect-obsidian/Canvas"
 import * as Node from "effect-obsidian/Canvas/Node"
 import * as Patch from "effect-obsidian/Patch"
@@ -130,19 +137,17 @@ export const AutoLayoutLive = Effect.all([
     const [, , update] = yield* _(Settings.autoLayout)
     plugin.registerEvent(
       plugin.app.vault.on("rename", (file, prev) => {
-        update((self) => {
-          if (!HashMap.has(self, prev)) {
-            return self
-          }
-          return HashMap.remove(self, prev).pipe(
-            HashMap.set(file.path, HashMap.unsafeGet(self, prev))
-          )
-        })
+        update((self) =>
+          Option.match(ReadonlyRecord.pop(self, prev), {
+            onSome: ([value]) => ReadonlyRecord.upsert(self, file.path, value),
+            onNone: () => self
+          })
+        )
       })
     )
     plugin.registerEvent(
       plugin.app.vault.on("delete", (file) => {
-        update(HashMap.remove(file.path))
+        update(ReadonlyRecord.remove(file.path))
       })
     )
   })
