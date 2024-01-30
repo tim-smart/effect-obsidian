@@ -106,7 +106,7 @@ const PatchMenu = Effect.gen(function*(_) {
         (original) =>
           function(this: Canvas.Canvas, menu: Obsidian.Menu) {
             original.call(this, menu)
-            const path = canvas.view.file!.path
+            const path = this.view.file!.path
             const enabled = get(path)
             menu.addItem((item) =>
               item.setTitle("Auto layout").setChecked(enabled).onClick(() => {
