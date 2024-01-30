@@ -4,6 +4,9 @@
 import * as Effect from "effect/Effect"
 import type * as Scope from "effect/Scope"
 
+/**
+ * @since 1.0.0
+ */
 export const prototype = <A, K extends keyof A>(
   name: string,
   self: A,
