@@ -40,9 +40,8 @@ const run = Effect.gen(function*(_) {
   // root nodes
   const roots: Array<Canvas.CanvasNode> = []
   canvas.nodes.forEach((node) => {
-    const isRoot = !canvas.getEdgesForNode(node).some((_) =>
-      _.to.node.id === node.id
-    )
+    const isRoot = node.getData().type !== "group" &&
+      !canvas.getEdgesForNode(node).some((_) => _.to.node.id === node.id)
     if (isRoot) {
       roots.push(node)
     }
@@ -53,10 +52,13 @@ const run = Effect.gen(function*(_) {
     node: Canvas.CanvasNode,
     targetWidth: number
   ): NodeBlock {
-    const children = Node.childrenFromEdges(
-      node,
-      canvas.getEdgesForNode(node),
-      true
+    const children = ReadonlyArray.filter(
+      Node.childrenFromEdges(
+        node,
+        canvas.getEdgesForNode(node),
+        true
+      ),
+      (_) => _.getData().type !== "group"
     )
     const childTargetWidth = Math.max(...children.map((_) => _.width))
     const childBlocks = children.map((_) => createBlock(_, childTargetWidth))
