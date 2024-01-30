@@ -59,6 +59,7 @@ export interface Canvas {
   requestSave(save?: boolean, triggerBySelf?: boolean): void
   select(nodes: CanvasNode): void
   selectOnly(nodes: CanvasNode): void
+  showQuickSettingsMenu(menu: Obsidian.Menu): void
   zoomToSelection(): void
 }
 
@@ -187,6 +188,20 @@ export const onActive = <R, E>(
  * @since 1.0.0
  * @category ops
  */
+export const nodeChanges = (
+  canvas: Canvas
+): Stream.Stream<never, never, number> =>
+  Effect.sync(() => canvas.getData().nodes.length).pipe(
+    Stream.repeatEffect,
+    Stream.schedule(Schedule.spaced(50)),
+    Stream.changes,
+    Stream.drop(1)
+  )
+
+/**
+ * @since 1.0.0
+ * @category ops
+ */
 export const onNodeChanges = <R, E>(
   effect: Effect.Effect<R, E, void>
 ): Effect.Effect<
@@ -197,11 +212,7 @@ export const onNodeChanges = <R, E>(
   onActive(Effect.gen(function*(_) {
     const canvas = yield* _(Canvas)
     yield* _(
-      Effect.sync(() => canvas.getData().nodes.length),
-      Stream.repeatEffect,
-      Stream.schedule(Schedule.spaced(50)),
-      Stream.changes,
-      Stream.drop(1),
+      nodeChanges(canvas),
       Stream.mapEffect((_) => Effect.ignoreLogged(effect)),
       Stream.runDrain,
       Effect.forkScoped

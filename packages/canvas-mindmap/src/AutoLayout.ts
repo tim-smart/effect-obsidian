@@ -1,6 +1,9 @@
-import { Effect, Layer, ReadonlyArray } from "effect"
+import { Effect, HashMap, Layer, ReadonlyArray, Stream } from "effect"
 import * as Canvas from "effect-obsidian/Canvas"
 import * as Node from "effect-obsidian/Canvas/Node"
+import * as Patch from "effect-obsidian/Patch"
+import * as Plugin from "effect-obsidian/Plugin"
+import type * as Obsidian from "obsidian"
 import * as Settings from "./Settings.js"
 
 class NodeBlock {
@@ -89,10 +92,60 @@ export const AutoLayoutLive = Effect.all([
     name: "Auto Layout",
     run
   }),
-  Settings.runWhen(
-    (_) => _.autoLayoutOnChange,
-    Canvas.onNodeChanges(run)
-  )
+  Canvas.onActive(Effect.gen(function*(_) {
+    const canvas = yield* _(Canvas.Canvas)
+    const [get, set] = yield* _(Settings.autoLayout)
+    const path = canvas.view.file!.path
+
+    yield* _(
+      Patch.prototype(
+        "AutoLayout",
+        canvas,
+        "showQuickSettingsMenu",
+        (original) =>
+          function(this: Canvas.Canvas, menu: Obsidian.Menu) {
+            original.call(this, menu)
+            const enabled = get(path)
+            menu.addItem((item) =>
+              item.setTitle("Auto layout").setChecked(enabled).onClick(() => {
+                set(path, !enabled)
+              })
+            )
+          }
+      )
+    )
+
+    yield* _(
+      Settings.runWhen(
+        () => get(path),
+        Canvas.nodeChanges(canvas).pipe(
+          Stream.filter(() => get(path)),
+          Stream.runForEach(() => run)
+        )
+      )
+    )
+  })),
+  Effect.gen(function*(_) {
+    const plugin = yield* _(Plugin.Plugin)
+    const [, , update] = yield* _(Settings.autoLayout)
+    plugin.registerEvent(
+      plugin.app.vault.on("rename", (file, prev) => {
+        update((self) => {
+          if (!HashMap.has(self, prev)) {
+            return self
+          }
+          return HashMap.remove(self, prev).pipe(
+            HashMap.set(file.path, HashMap.unsafeGet(self, prev))
+          )
+        })
+      })
+    )
+    plugin.registerEvent(
+      plugin.app.vault.on("delete", (file) => {
+        update(HashMap.remove(file.path))
+      })
+    )
+  })
 ]).pipe(
   Layer.scopedDiscard,
   Layer.provide(Settings.layer)

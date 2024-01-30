@@ -22,6 +22,16 @@ export interface Settings {
 
 /**
  * @since 1.0.0
+ * @category tags
+ */
+export interface SettingsService<A> {
+  readonly ref: SubscriptionRef.SubscriptionRef<A>
+  readonly unsafeGet: () => A
+  readonly unsafeUpdate: (f: (_: A) => A) => void
+}
+
+/**
+ * @since 1.0.0
  * @category layers
  */
 export const layer = <
@@ -36,8 +46,8 @@ export const layer = <
   schema: Schema.Schema<R, I, A>,
   register: (get: () => A, update: (_: (_: A) => A) => Promise<void>) => Tab
 ): {
-  readonly tag: Context.Tag<Settings, SubscriptionRef.SubscriptionRef<A>>
-  readonly layer: Layer.Layer<Plugin | R, never, Settings>
+  readonly tag: Context.Tag<Settings, SettingsService<A>>
+  readonly layer: Layer.Layer<Plugin | Exclude<R, Scope.Scope>, never, Settings>
   readonly runWhen: <R, E>(
     f: (_: A) => boolean,
     effect: Effect.Effect<R, E, void>
@@ -46,8 +56,15 @@ export const layer = <
     never,
     void
   >
+  readonly prop: <K extends keyof A>(
+    key: K
+  ) => Effect.Effect<
+    Settings,
+    never,
+    readonly [() => A[K], (f: (_: A[K]) => A[K]) => void]
+  >
 } => {
-  const tag = Context.Tag<Settings, SubscriptionRef.SubscriptionRef<A>>(
+  const tag = Context.Tag<Settings, SettingsService<A>>(
     "effect-obsidian/Settings"
   )
   const layer = Effect.gen(function*(_) {
@@ -62,6 +79,7 @@ export const layer = <
     yield* _(
       ref.changes,
       Stream.drop(1),
+      Stream.debounce(1000),
       Stream.flatMap(Schema.encode(schema)),
       Stream.runForEach((data) => Effect.promise(() => plugin.saveData(data))),
       Effect.forkScoped
@@ -75,7 +93,11 @@ export const layer = <
     )
     plugin.addSettingTab(new Class(plugin.app, plugin))
 
-    return ref
+    return tag.of({
+      ref,
+      unsafeGet: () => Effect.runSync(SubscriptionRef.get(ref)),
+      unsafeUpdate: (f) => Effect.runSync(SubscriptionRef.update(ref, f))
+    })
   }).pipe(
     Layer.scoped(tag)
   )
@@ -89,10 +111,10 @@ export const layer = <
     void
   > =>
     Effect.gen(function*(_) {
-      const ref = yield* _(tag)
+      const settings = yield* _(tag)
       const map = yield* _(FiberMap.make<string>())
       yield* _(
-        ref.changes,
+        settings.ref.changes,
         Stream.mapEffect(
           (_): Effect.Effect<Exclude<R, Scope.Scope>, never, void> =>
             f(_) ?
@@ -108,5 +130,19 @@ export const layer = <
       )
     })
 
-  return { tag, layer, runWhen } as const
+  const prop = <K extends keyof A>(
+    key: K
+  ) =>
+    Effect.gen(function*(_) {
+      const settings = yield* _(tag)
+      const get = () => settings.unsafeGet()[key]
+      const update = (f: (_: A[K]) => A[K]) =>
+        settings.unsafeUpdate((_) => ({
+          ..._,
+          [key]: f(_[key])
+        }))
+      return [get, update] as const
+    })
+
+  return { tag, layer, runWhen, prop } as const
 }
