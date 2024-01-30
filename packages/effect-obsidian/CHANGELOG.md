@@ -1,5 +1,13 @@
 # effect-obsidian
 
+## 0.1.5
+
+### Patch Changes
+
+- [`670eae9`](https://github.com/tim-smart/effect-obsidian/commit/670eae9c8f3caff8671715d561315a59b514dfa2) Thanks [@tim-smart](https://github.com/tim-smart)! - add prop helper to Settings
+
+- [`670eae9`](https://github.com/tim-smart/effect-obsidian/commit/670eae9c8f3caff8671715d561315a59b514dfa2) Thanks [@tim-smart](https://github.com/tim-smart)! - add Patch module for modifying prototypes
+
 ## 0.1.4
 
 ### Patch Changes
