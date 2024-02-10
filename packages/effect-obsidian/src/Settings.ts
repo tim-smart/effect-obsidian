@@ -51,10 +51,18 @@ export const layer = <
   readonly runWhen: <R, E>(
     f: (_: A) => boolean,
     effect: Effect.Effect<void, E, R>
-  ) => Effect.Effect<void, never, Settings | Scope.Scope | Exclude<R, Scope.Scope>>
+  ) => Effect.Effect<
+    void,
+    never,
+    Settings | Scope.Scope | Exclude<R, Scope.Scope>
+  >
   readonly prop: <K extends keyof A>(
     key: K
-  ) => Effect.Effect<readonly [() => A[K], (f: (_: A[K]) => A[K]) => void], never, Settings>
+  ) => Effect.Effect<
+    readonly [() => A[K], (f: (_: A[K]) => A[K]) => void],
+    never,
+    Settings
+  >
 } => {
   const tag = Context.GenericTag<Settings, SettingsService<A>>(
     "effect-obsidian/Settings"
@@ -97,7 +105,11 @@ export const layer = <
   const runWhen = <R, E>(
     f: (_: A) => boolean,
     effect: Effect.Effect<void, E, R>
-  ): Effect.Effect<void, never, Settings | Scope.Scope | Exclude<R, Scope.Scope>> =>
+  ): Effect.Effect<
+    void,
+    never,
+    Settings | Scope.Scope | Exclude<R, Scope.Scope>
+  > =>
     Effect.gen(function*(_) {
       const settings = yield* _(tag)
       const map = yield* _(FiberMap.make<string>())
