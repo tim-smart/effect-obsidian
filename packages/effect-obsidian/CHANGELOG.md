@@ -1,5 +1,11 @@
 # effect-obsidian
 
+## 0.2.0
+
+### Minor Changes
+
+- [`d068553`](https://github.com/tim-smart/effect-obsidian/commit/d068553a0bfde9748764ce0d9ccdaf2fae63340b) Thanks [@tim-smart](https://github.com/tim-smart)! - update effect
+
 ## 0.1.5
 
 ### Patch Changes
