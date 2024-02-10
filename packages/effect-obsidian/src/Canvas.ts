@@ -67,13 +67,13 @@ export interface Canvas {
  * @since 1.0.0
  * @category tags
  */
-export const Canvas = Context.Tag<Canvas>("effect-obsidian/Canvas")
+export const Canvas = Context.GenericTag<Canvas>("effect-obsidian/Canvas")
 
 /**
  * @since 1.0.0
  * @category accessors
  */
-export const get: Effect.Effect<Plugin.Plugin, never, Option.Option<Canvas>> =
+export const get: Effect.Effect<Option.Option<Canvas>, never, Plugin.Plugin> =
   Effect.map(
     Plugin.Plugin,
     (_) =>
@@ -118,7 +118,7 @@ export const createEdge = (options: {
   readonly fromSide?: NodeSide
   readonly to: CanvasNode
   readonly toSide?: NodeSide
-}): Effect.Effect<Canvas, never, void> =>
+}): Effect.Effect<void, never, Canvas> =>
   Effect.andThen(Canvas, (canvas) => {
     const data = canvas.getData()
     canvas.importData({
@@ -141,9 +141,9 @@ export const createEdge = (options: {
  * @category ops
  */
 export const selectedNode: Effect.Effect<
-  Canvas,
+  Option.Option<CanvasNode>,
   never,
-  Option.Option<CanvasNode>
+  Canvas
 > = Effect.gen(function*(_) {
   const canvas = yield* _(Canvas)
   return pipe(ReadonlyArray.fromIterable(canvas.selection), ReadonlyArray.head)
@@ -154,14 +154,14 @@ export const selectedNode: Effect.Effect<
  * @category ops
  */
 export const onActive = <R, E>(
-  effect: Effect.Effect<R, E, void>
+  effect: Effect.Effect<void, E, R>
 ): Effect.Effect<
-  Plugin.Plugin | Scope.Scope | Exclude<Exclude<R, Scope.Scope>, Canvas>,
+  void,
   never,
-  void
+  Plugin.Plugin | Scope.Scope | Exclude<Exclude<R, Scope.Scope>, Canvas>
 > =>
   Effect.gen(function*(_) {
-    const set = yield* _(FiberSet.make())
+    const set = yield* _(FiberSet.make<unknown, unknown>())
     yield* _(
       get,
       Effect.zip(FiberSet.size(set)),
@@ -190,7 +190,7 @@ export const onActive = <R, E>(
  */
 export const nodeChanges = (
   canvas: Canvas
-): Stream.Stream<never, never, number> =>
+): Stream.Stream<number> =>
   Effect.sync(() => canvas.getData().nodes.length).pipe(
     Stream.repeatEffect,
     Stream.schedule(Schedule.spaced(50)),
@@ -203,11 +203,11 @@ export const nodeChanges = (
  * @category ops
  */
 export const onNodeChanges = <R, E>(
-  effect: Effect.Effect<R, E, void>
+  effect: Effect.Effect<void, E, R>
 ): Effect.Effect<
-  Plugin.Plugin | Scope.Scope | Exclude<R, Canvas>,
+  void,
   never,
-  void
+  Plugin.Plugin | Scope.Scope | Exclude<R, Canvas>
 > =>
   onActive(Effect.gen(function*(_) {
     const canvas = yield* _(Canvas)

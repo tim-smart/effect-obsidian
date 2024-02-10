@@ -18,26 +18,25 @@ export const {
       { default: () => ReadonlyRecord.empty() }
     )
   }),
-  (get, update) =>
-    class SettingsTab extends PluginSettingTab {
-      display() {
-        this.containerEl.empty()
-        const current = get()
-        new Setting(this.containerEl)
-          .setName("Auto layout by default")
-          .setDesc("Enable auto layout for Canvas by default")
-          .addToggle((toggle) =>
-            toggle
-              .setValue(current.autoLayoutDefault)
-              .onChange((value) =>
-                update((_) => ({
-                  ..._,
-                  autoLayoutDefault: value
-                }))
-              )
-          )
-      }
+  (get, update) => (class SettingsTab extends PluginSettingTab {
+    display() {
+      this.containerEl.empty()
+      const current = get()
+      new Setting(this.containerEl)
+        .setName("Auto layout by default")
+        .setDesc("Enable auto layout for Canvas by default")
+        .addToggle((toggle) =>
+          toggle
+            .setValue(current.autoLayoutDefault)
+            .onChange((value) =>
+              update((_) => ({
+                ..._,
+                autoLayoutDefault: value
+              }))
+            )
+        )
     }
+  })
 )
 
 export const autoLayout = Effect.gen(function*(_) {
@@ -53,7 +52,7 @@ export const autoLayout = Effect.gen(function*(_) {
       )
     },
     (path: string, value: boolean) => {
-      return update(ReadonlyRecord.upsert(path, value))
+      return update(ReadonlyRecord.set(path, value))
     },
     update
   ] as const

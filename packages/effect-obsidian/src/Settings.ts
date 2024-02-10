@@ -43,28 +43,20 @@ export const layer = <
     plugin: Obsidian.Plugin
   ) => Obsidian.PluginSettingTab
 >(
-  schema: Schema.Schema<R, I, A>,
+  schema: Schema.Schema<A, I, R>,
   register: (get: () => A, update: (_: (_: A) => A) => Promise<void>) => Tab
 ): {
   readonly tag: Context.Tag<Settings, SettingsService<A>>
-  readonly layer: Layer.Layer<Plugin | Exclude<R, Scope.Scope>, never, Settings>
+  readonly layer: Layer.Layer<Settings, never, Plugin | Exclude<R, Scope.Scope>>
   readonly runWhen: <R, E>(
     f: (_: A) => boolean,
-    effect: Effect.Effect<R, E, void>
-  ) => Effect.Effect<
-    Settings | Scope.Scope | Exclude<R, Scope.Scope>,
-    never,
-    void
-  >
+    effect: Effect.Effect<void, E, R>
+  ) => Effect.Effect<void, never, Settings | Scope.Scope | Exclude<R, Scope.Scope>>
   readonly prop: <K extends keyof A>(
     key: K
-  ) => Effect.Effect<
-    Settings,
-    never,
-    readonly [() => A[K], (f: (_: A[K]) => A[K]) => void]
-  >
+  ) => Effect.Effect<readonly [() => A[K], (f: (_: A[K]) => A[K]) => void], never, Settings>
 } => {
-  const tag = Context.Tag<Settings, SettingsService<A>>(
+  const tag = Context.GenericTag<Settings, SettingsService<A>>(
     "effect-obsidian/Settings"
   )
   const layer = Effect.gen(function*(_) {
@@ -104,19 +96,15 @@ export const layer = <
 
   const runWhen = <R, E>(
     f: (_: A) => boolean,
-    effect: Effect.Effect<R, E, void>
-  ): Effect.Effect<
-    Settings | Scope.Scope | Exclude<R, Scope.Scope>,
-    never,
-    void
-  > =>
+    effect: Effect.Effect<void, E, R>
+  ): Effect.Effect<void, never, Settings | Scope.Scope | Exclude<R, Scope.Scope>> =>
     Effect.gen(function*(_) {
       const settings = yield* _(tag)
       const map = yield* _(FiberMap.make<string>())
       yield* _(
         settings.ref.changes,
         Stream.mapEffect(
-          (_): Effect.Effect<Exclude<R, Scope.Scope>, never, void> =>
+          (_): Effect.Effect<void, never, Exclude<R, Scope.Scope>> =>
             f(_) ?
               effect.pipe(
                 Effect.zipRight(Effect.never),

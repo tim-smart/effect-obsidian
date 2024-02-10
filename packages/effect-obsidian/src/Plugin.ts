@@ -22,7 +22,7 @@ export interface Plugin {
  * @since 1.0.0
  * @category tags
  */
-export const Plugin: Context.Tag<Plugin, Obsidian.Plugin> = Context.Tag<
+export const Plugin: Context.Tag<Plugin, Obsidian.Plugin> = Context.GenericTag<
   Plugin,
   Obsidian.Plugin
 >(
@@ -41,7 +41,7 @@ export interface Editor {
  * @since 1.0.0
  * @category tags
  */
-export const Editor = Context.Tag<Editor, Obsidian.Editor>(
+export const Editor = Context.GenericTag<Editor, Obsidian.Editor>(
   "effect-obsidian/Plugin/Editor"
 )
 
@@ -57,7 +57,7 @@ export interface MarkdownView {
  * @since 1.0.0
  * @category tags
  */
-export const MarkdownView = Context.Tag<
+export const MarkdownView = Context.GenericTag<
   MarkdownView,
   Obsidian.MarkdownView | Obsidian.MarkdownFileInfo
 >(
@@ -69,13 +69,12 @@ export const MarkdownView = Context.Tag<
  * @category classes
  */
 export const Class = <E, A>(
-  layer: Layer.Layer<Plugin, E, A>
-): typeof Obsidian.Plugin =>
-  class extends EffectClass<E> {
-    run(): Effect.Effect<Plugin | Scope.Scope, E, void> {
-      return Layer.build(layer)
-    }
+  layer: Layer.Layer<A, E, Plugin>
+): typeof Obsidian.Plugin => (class extends EffectClass<E> {
+  run(): Effect.Effect<void, E, Plugin | Scope.Scope> {
+    return Layer.build(layer)
   }
+})
 
 /**
  * @since 1.0.0
@@ -87,7 +86,7 @@ export abstract class EffectClass<E> extends Obsidian.Plugin {
   /**
    * @since 1.0.0
    */
-  abstract run(): Effect.Effect<Plugin | Scope.Scope, E, void>
+  abstract run(): Effect.Effect<void, E, Plugin | Scope.Scope>
 
   /**
    * @since 1.0.0
@@ -129,8 +128,8 @@ export interface BaseCommand extends
  * @category commands
  */
 export interface Command<R, E> extends BaseCommand {
-  readonly run: Effect.Effect<R, E, void>
-  readonly check?: Effect.Effect<R, E, boolean>
+  readonly run: Effect.Effect<void, E, R>
+  readonly check?: Effect.Effect<boolean, E, R>
 }
 
 /**
@@ -139,11 +138,11 @@ export interface Command<R, E> extends BaseCommand {
  */
 export const addCommand = <R, E>(
   command: Command<R, E>
-): Effect.Effect<R | Plugin | Scope.Scope, never, void> =>
+): Effect.Effect<void, never, R | Plugin | Scope.Scope> =>
   Effect.gen(function*(_) {
     const plugin = yield* _(Plugin)
     const runtime = yield* _(Effect.runtime<R>())
-    const run = yield* _(FiberSet.makeRuntime<R>())
+    const run = yield* _(FiberSet.makeRuntime<unknown, unknown, R>())
     const runSync = Runtime.runSync(runtime)
 
     plugin.addCommand(
@@ -174,9 +173,9 @@ export const addCommand = <R, E>(
 export const addCommandEditor = <R, E>(
   command: Command<R, E>
 ): Effect.Effect<
-  Exclude<Exclude<R, Editor>, MarkdownView> | Plugin | Scope.Scope,
+  void,
   never,
-  void
+  Exclude<Exclude<R, Editor>, MarkdownView> | Plugin | Scope.Scope
 > =>
   Effect.gen(function*(_) {
     const plugin = yield* _(Plugin)
@@ -184,7 +183,11 @@ export const addCommandEditor = <R, E>(
       Effect.runtime<Exclude<Exclude<R, Editor>, MarkdownView>>()
     )
     const run = yield* _(
-      FiberSet.makeRuntime<Exclude<Exclude<R, Editor>, MarkdownView>>()
+      FiberSet.makeRuntime<
+        unknown,
+        unknown,
+        Exclude<Exclude<R, Editor>, MarkdownView>
+      >()
     )
     const runSync = Runtime.runSync(runtime)
 
@@ -222,7 +225,7 @@ export const addCommandEditor = <R, E>(
  * @since 1.0.0
  * @category accessors
  */
-export const workspace: Effect.Effect<Plugin, never, Obsidian.Workspace> =
+export const workspace: Effect.Effect<Obsidian.Workspace, never, Plugin> =
   Effect.map(
     Plugin,
     (_) => _.app.workspace
@@ -233,10 +236,10 @@ export const workspace: Effect.Effect<Plugin, never, Obsidian.Workspace> =
  * @category runtime
  */
 export const runner = <Args extends ReadonlyArray<any>, R, E>(
-  f: (...args: Args) => Effect.Effect<R, E, void>
-): Effect.Effect<Scope.Scope | R, never, (...args: Args) => void> =>
+  f: (...args: Args) => Effect.Effect<void, E, R>
+): Effect.Effect<(...args: Args) => void, never, Scope.Scope | R> =>
   Effect.gen(function*(_) {
-    const run = yield* _(FiberSet.makeRuntime<R>())
+    const run = yield* _(FiberSet.makeRuntime<unknown, unknown, R>())
     return (...args: Args) => {
       run(f(...args))
     }

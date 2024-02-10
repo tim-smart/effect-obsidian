@@ -12,7 +12,7 @@ export const prototype = <A, K extends keyof A>(
   self: A,
   method: K,
   patch: (original: A[K]) => A[K]
-): Effect.Effect<Scope.Scope, never, void> =>
+): Effect.Effect<void, never, Scope.Scope> =>
   Effect.suspend(() => {
     const symbol = Symbol.for(`effect-obsidian/Patch/${name}`)
     const proto = Object.getPrototypeOf(self)

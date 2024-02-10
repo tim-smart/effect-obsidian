@@ -5,8 +5,7 @@ import * as Node from "effect-obsidian/Canvas/Node"
 export const NodeNavigationLive = Effect.all([
   Canvas.addCommand({
     id: "focus-down",
-    name: "Focus Down",
-    hotkeys: [{ modifiers: ["Alt"], key: "ArrowDown" }],
+    name: "Focus down",
     run: Effect.gen(function*(_) {
       const canvas = yield* _(Canvas.Canvas)
       const node = yield* _(Canvas.selectedNode, Effect.flatten)
@@ -20,8 +19,7 @@ export const NodeNavigationLive = Effect.all([
   }),
   Canvas.addCommand({
     id: "focus-up",
-    name: "Focus Up",
-    hotkeys: [{ modifiers: ["Alt"], key: "ArrowUp" }],
+    name: "Focus up",
     run: Effect.gen(function*(_) {
       const canvas = yield* _(Canvas.Canvas)
       const node = yield* _(Canvas.selectedNode, Effect.flatten)
@@ -35,8 +33,7 @@ export const NodeNavigationLive = Effect.all([
   }),
   Canvas.addCommand({
     id: "focus-left",
-    name: "Focus Left",
-    hotkeys: [{ modifiers: ["Alt"], key: "ArrowLeft" }],
+    name: "Focus left",
     run: Effect.gen(function*(_) {
       const canvas = yield* _(Canvas.Canvas)
       const node = yield* _(Canvas.selectedNode, Effect.flatten)
@@ -47,8 +44,7 @@ export const NodeNavigationLive = Effect.all([
   }),
   Canvas.addCommand({
     id: "focus-right",
-    name: "Focus Right",
-    hotkeys: [{ modifiers: ["Alt"], key: "ArrowRight" }],
+    name: "Focus right",
     run: Effect.gen(function*(_) {
       const canvas = yield* _(Canvas.Canvas)
       const node = yield* _(Canvas.selectedNode, Effect.flatten)

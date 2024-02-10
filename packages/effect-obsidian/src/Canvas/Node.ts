@@ -22,7 +22,7 @@ export const yOrder: Order.Order<{ y: number }> = Order.struct({
  */
 export const parent = (
   node: Canvas.CanvasNode
-): Effect.Effect<Canvas.Canvas, never, Option.Option<Canvas.CanvasNode>> =>
+): Effect.Effect<Option.Option<Canvas.CanvasNode>, never, Canvas.Canvas> =>
   Effect.gen(function*(_) {
     const canvas = yield* _(Canvas.Canvas)
     return pipe(
@@ -38,7 +38,7 @@ export const parent = (
  */
 export const children = (
   node: Canvas.CanvasNode
-): Effect.Effect<Canvas.Canvas, never, ReadonlyArray<Canvas.CanvasNode>> =>
+): Effect.Effect<ReadonlyArray<Canvas.CanvasNode>, never, Canvas.Canvas> =>
   Effect.gen(function*(_) {
     const canvas = yield* _(Canvas.Canvas)
     return childrenFromEdges(node, canvas.getEdgesForNode(node))
@@ -70,7 +70,7 @@ export const childrenFromEdges = (
  */
 export const siblings = (
   node: Canvas.CanvasNode
-): Effect.Effect<Canvas.Canvas, never, Array<Canvas.CanvasNode>> =>
+): Effect.Effect<Array<Canvas.CanvasNode>, never, Canvas.Canvas> =>
   Effect.gen(function*(_) {
     const canvas = yield* _(Canvas.Canvas)
     const parentNode = yield* _(parent(node))

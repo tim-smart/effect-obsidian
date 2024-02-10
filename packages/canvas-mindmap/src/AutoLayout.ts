@@ -105,17 +105,16 @@ const PatchMenu = Effect.gen(function*(_) {
         "AutoLayout",
         canvas,
         "showQuickSettingsMenu",
-        (original) =>
-          function(this: Canvas.Canvas, menu: Obsidian.Menu) {
-            original.call(this, menu)
-            const path = this.view.file!.path
-            const enabled = get(path)
-            menu.addItem((item) =>
-              item.setTitle("Auto layout").setChecked(enabled).onClick(() => {
-                set(path, !enabled)
-              })
-            )
-          }
+        (original) => (function(this: Canvas.Canvas, menu: Obsidian.Menu) {
+          original.call(this, menu)
+          const path = this.view.file!.path
+          const enabled = get(path)
+          menu.addItem((item) =>
+            item.setTitle("Auto layout").setChecked(enabled).onClick(() => {
+              set(path, !enabled)
+            })
+          )
+        })
       )
     ),
     Scope.extend(scope)
@@ -150,7 +149,7 @@ const UpdateSettings = Effect.gen(function*(_) {
     plugin.app.vault.on("rename", (file, prev) => {
       update((self) =>
         Option.match(ReadonlyRecord.pop(self, prev), {
-          onSome: ([value]) => ReadonlyRecord.upsert(self, file.path, value),
+          onSome: ([value]) => ReadonlyRecord.set(self, file.path, value),
           onNone: () => self
         })
       )
