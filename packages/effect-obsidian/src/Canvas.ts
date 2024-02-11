@@ -161,7 +161,7 @@ export const onActive = <R, E>(
   Plugin.Plugin | Scope.Scope | Exclude<Exclude<R, Scope.Scope>, Canvas>
 > =>
   Effect.gen(function*(_) {
-    const set = yield* _(FiberSet.make<unknown, unknown>())
+    const set = yield* _(FiberSet.make())
     yield* _(
       get,
       Effect.zip(FiberSet.size(set)),

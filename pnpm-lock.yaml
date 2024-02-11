@@ -117,11 +117,11 @@ importers:
         version: 1.4.11(@codemirror/state@6.4.0)(@codemirror/view@6.24.0)
     devDependencies:
       '@effect/schema':
-        specifier: ^0.62.1
-        version: 0.62.1(effect@2.3.1)(fast-check@3.15.1)
+        specifier: ^0.62.2
+        version: 0.62.2(effect@2.3.2)(fast-check@3.15.1)
       effect:
-        specifier: ^2.3.1
-        version: 2.3.1
+        specifier: ^2.3.2
+        version: 2.3.2
       effect-obsidian:
         specifier: workspace:^
         version: link:../effect-obsidian/dist
@@ -133,11 +133,11 @@ importers:
   packages/effect-obsidian:
     devDependencies:
       '@effect/schema':
-        specifier: ^0.62.1
-        version: 0.62.1(effect@2.3.1)(fast-check@3.15.1)
+        specifier: ^0.62.2
+        version: 0.62.2(effect@2.3.2)(fast-check@3.15.1)
       effect:
-        specifier: ^2.3.1
-        version: 2.3.1
+        specifier: ^2.3.2
+        version: 2.3.2
       obsidian:
         specifier: ^1.4.11
         version: 1.4.11(@codemirror/state@6.4.0)(@codemirror/view@6.24.0)
@@ -699,13 +699,13 @@ packages:
     resolution: {integrity: sha512-BnlM8LlaqCAYgdRfxlbR7gXGh/FD1scL1fPgNVJEPoOM08od1jtJz+iKhwfaud8TPnnhZR+TED2h5ynjanLeCQ==}
     dev: true
 
-  /@effect/schema@0.62.1(effect@2.3.1)(fast-check@3.15.1):
-    resolution: {integrity: sha512-Zi8PtOElNyq0INLqGlDrMqB/uzs/TACP2ZhcLABm/QjFVvRTO996UaVdsOyA+OTqroQkoYEe+q/cnXxlMAGLBw==}
+  /@effect/schema@0.62.2(effect@2.3.2)(fast-check@3.15.1):
+    resolution: {integrity: sha512-pEHBjiaSxrF/nIRrt06X6PWJh06kJJndZx4JbLlWY5HDhE9v307AfbmUgf97aqJsl5SWofuMlfRBYt9JH4mP0Q==}
     peerDependencies:
-      effect: ^2.3.1
+      effect: ^2.3.2
       fast-check: ^3.13.2
     dependencies:
-      effect: 2.3.1
+      effect: 2.3.2
       fast-check: 3.15.1
     dev: true
 
@@ -2537,8 +2537,8 @@ packages:
     resolution: {integrity: sha512-I88TYZWc9XiYHRQ4/3c5rjjfgkjhLyW2luGIheGERbNQ6OY7yTybanSpDXZa8y7VUP9YmDcYa+eyq4ca7iLqWA==}
     dev: true
 
-  /effect@2.3.1:
-    resolution: {integrity: sha512-bOmhWIt3WjccP2DXan8eJmIqjVXwan0hj+Y6BHJOauHt8HNEuQndp6D7bAUsUsjPoKGCU70J9sMeT5QEVYlgbQ==}
+  /effect@2.3.2:
+    resolution: {integrity: sha512-cEgbb56c9415hiHwX55mG3w8IH147bk1W9i12fEpM+LBCmMISrFoYFXPTxVYA1ezNKJW/6rrBdNTRBM8DVYrBw==}
     dev: true
 
   /electron-to-chromium@1.4.647:

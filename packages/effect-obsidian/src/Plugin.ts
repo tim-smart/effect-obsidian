@@ -142,7 +142,7 @@ export const addCommand = <R, E>(
   Effect.gen(function*(_) {
     const plugin = yield* _(Plugin)
     const runtime = yield* _(Effect.runtime<R>())
-    const run = yield* _(FiberSet.makeRuntime<unknown, unknown, R>())
+    const run = yield* _(FiberSet.makeRuntime<R>())
     const runSync = Runtime.runSync(runtime)
 
     plugin.addCommand(
@@ -183,11 +183,7 @@ export const addCommandEditor = <R, E>(
       Effect.runtime<Exclude<Exclude<R, Editor>, MarkdownView>>()
     )
     const run = yield* _(
-      FiberSet.makeRuntime<
-        unknown,
-        unknown,
-        Exclude<Exclude<R, Editor>, MarkdownView>
-      >()
+      FiberSet.makeRuntime<Exclude<Exclude<R, Editor>, MarkdownView>>()
     )
     const runSync = Runtime.runSync(runtime)
 
@@ -239,7 +235,7 @@ export const runner = <Args extends ReadonlyArray<any>, R, E>(
   f: (...args: Args) => Effect.Effect<void, E, R>
 ): Effect.Effect<(...args: Args) => void, never, Scope.Scope | R> =>
   Effect.gen(function*(_) {
-    const run = yield* _(FiberSet.makeRuntime<unknown, unknown, R>())
+    const run = yield* _(FiberSet.makeRuntime<R>())
     return (...args: Args) => {
       run(f(...args))
     }
