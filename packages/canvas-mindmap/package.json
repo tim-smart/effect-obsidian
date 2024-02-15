@@ -26,8 +26,8 @@
     "obsidian": "^1.4.11"
   },
   "devDependencies": {
-    "@effect/schema": "^0.62.2",
-    "effect": "^2.3.2",
+    "@effect/schema": "^0.62.7",
+    "effect": "^2.3.6",
     "effect-obsidian": "workspace:^",
     "tsup": "^8.0.2"
   }
