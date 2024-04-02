@@ -35,13 +35,13 @@
     }
   },
   "devDependencies": {
-    "@effect/schema": "^0.62.7",
-    "effect": "^2.3.6",
-    "obsidian": "^1.4.11"
+    "@effect/schema": "^0.64.16",
+    "effect": "^2.4.15",
+    "obsidian": "1.5.7-1"
   },
   "peerDependencies": {
-    "@effect/schema": "^0.62.1",
-    "effect": "^2.3.2",
+    "@effect/schema": "^0.64.16",
+    "effect": "^2.4.15",
     "obsidian": "^1"
   }
 }

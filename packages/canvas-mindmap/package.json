@@ -23,11 +23,11 @@
     "check": "tsc -b tsconfig.json"
   },
   "dependencies": {
-    "obsidian": "^1.4.11"
+    "obsidian": "1.5.7-1"
   },
   "devDependencies": {
-    "@effect/schema": "^0.62.7",
-    "effect": "^2.3.6",
+    "@effect/schema": "^0.64.16",
+    "effect": "^2.4.15",
     "effect-obsidian": "workspace:^",
     "tsup": "^8.0.2"
   }
