@@ -1,5 +1,11 @@
 # effect-obsidian
 
+## 0.2.3
+
+### Patch Changes
+
+- [`ecf635c`](https://github.com/tim-smart/effect-obsidian/commit/ecf635c8a567c2afc329648d2023389541fe478c) Thanks [@tim-smart](https://github.com/tim-smart)! - update dependencies
+
 ## 0.2.2
 
 ### Patch Changes
