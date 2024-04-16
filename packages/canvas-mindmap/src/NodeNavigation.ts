@@ -1,4 +1,4 @@
-import { Effect, Layer, ReadonlyArray } from "effect"
+import { Array, Effect, Layer } from "effect"
 import * as Canvas from "effect-obsidian/Canvas"
 import * as Node from "effect-obsidian/Canvas/Node"
 
@@ -11,7 +11,7 @@ export const NodeNavigationLive = Effect.all([
       const node = yield* _(Canvas.selectedNode, Effect.flatten)
       const nextNode = yield* _(
         Node.siblings(node),
-        Effect.flatMap(ReadonlyArray.findFirst((_) => _.y > node.y))
+        Effect.flatMap(Array.findFirst((_) => _.y > node.y))
       )
       canvas.selectOnly(nextNode)
       canvas.panIntoView(nextNode.getBBox())
@@ -25,7 +25,7 @@ export const NodeNavigationLive = Effect.all([
       const node = yield* _(Canvas.selectedNode, Effect.flatten)
       const nextNode = yield* _(
         Node.siblings(node),
-        Effect.flatMap(ReadonlyArray.findLast((_) => _.y < node.y))
+        Effect.flatMap(Array.findLast((_) => _.y < node.y))
       )
       canvas.selectOnly(nextNode)
       canvas.panIntoView(nextNode.getBBox())
@@ -50,7 +50,7 @@ export const NodeNavigationLive = Effect.all([
       const node = yield* _(Canvas.selectedNode, Effect.flatten)
       const child = yield* _(
         Node.children(node),
-        Effect.flatMap(ReadonlyArray.head)
+        Effect.flatMap(Array.head)
       )
       canvas.selectOnly(child)
       canvas.panIntoView(child.getBBox())

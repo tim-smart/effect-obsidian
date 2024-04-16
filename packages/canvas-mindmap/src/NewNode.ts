@@ -1,4 +1,4 @@
-import { Effect, Layer, Option, ReadonlyArray } from "effect"
+import { Array, Effect, Layer, Option } from "effect"
 import * as Canvas from "effect-obsidian/Canvas"
 import * as Node from "effect-obsidian/Canvas/Node"
 
@@ -45,7 +45,7 @@ export const NewNodeLive = Effect.all([
       const node = yield* _(Canvas.selectedNode, Effect.flatten)
       const lastChild = yield* _(
         Node.children(node),
-        Effect.map(ReadonlyArray.last)
+        Effect.map(Array.last)
       )
 
       const newNode = Option.match(lastChild, {

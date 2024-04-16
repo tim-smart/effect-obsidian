@@ -1,12 +1,12 @@
 /**
  * @since 1.0.0
  */
+import * as Array from "effect/Array"
 import * as Context from "effect/Context"
 import * as Effect from "effect/Effect"
-import * as FiberSet from "effect/FiberSet"
+import * as FiberHandle from "effect/FiberHandle"
 import { pipe } from "effect/Function"
 import * as Option from "effect/Option"
-import * as ReadonlyArray from "effect/ReadonlyArray"
 import * as Schedule from "effect/Schedule"
 import type * as Scope from "effect/Scope"
 import * as Stream from "effect/Stream"
@@ -146,7 +146,7 @@ export const selectedNode: Effect.Effect<
   Canvas
 > = Effect.gen(function*(_) {
   const canvas = yield* _(Canvas)
-  return pipe(ReadonlyArray.fromIterable(canvas.selection), ReadonlyArray.head)
+  return pipe(Array.fromIterable(canvas.selection), Array.head)
 })
 
 /**
@@ -161,24 +161,18 @@ export const onActive = <R, E>(
   Plugin.Plugin | Scope.Scope | Exclude<Exclude<R, Scope.Scope>, Canvas>
 > =>
   Effect.gen(function*(_) {
-    const set = yield* _(FiberSet.make())
+    const handle = yield* _(FiberHandle.make())
+    const scoped = Effect.scoped(effect)
     yield* _(
       get,
-      Effect.zip(FiberSet.size(set)),
-      Effect.flatMap(([_, size]) =>
-        Option.match(_, {
-          onNone: () => size > 0 ? FiberSet.clear(set) : Effect.unit,
-          onSome: (canvas) =>
-            size === 0 ?
-              effect.pipe(
-                Effect.zipRight(Effect.never),
-                Effect.scoped,
-                Effect.provideService(Canvas, canvas),
-                FiberSet.run(set)
-              ) :
-              Effect.unit
-        })
-      ),
+      Effect.flatMap(Option.match({
+        onNone: () => FiberHandle.clear(handle),
+        onSome: (canvas) =>
+          scoped.pipe(
+            Effect.provideService(Canvas, canvas),
+            FiberHandle.run(handle, { onlyIfMissing: true })
+          )
+      })),
       Effect.schedule(Schedule.spaced(2000)),
       Effect.forkScoped
     )

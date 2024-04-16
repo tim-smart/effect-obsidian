@@ -1,12 +1,4 @@
-import {
-  Effect,
-  Layer,
-  Option,
-  ReadonlyArray,
-  ReadonlyRecord,
-  Scope,
-  Stream
-} from "effect"
+import { Array, Effect, Layer, Option, Record, Scope, Stream } from "effect"
 import * as Canvas from "effect-obsidian/Canvas"
 import * as Node from "effect-obsidian/Canvas/Node"
 import * as Patch from "effect-obsidian/Patch"
@@ -23,7 +15,7 @@ class NodeBlock {
   ) {
     this.height = Math.max(
       node.height,
-      ReadonlyArray.reduce(
+      Array.reduce(
         children,
         0,
         (acc, child) => acc === 0 ? child.height : acc + child.height + gap
@@ -52,7 +44,7 @@ const run = Effect.gen(function*(_) {
     node: Canvas.CanvasNode,
     targetWidth: number
   ): NodeBlock {
-    const children = ReadonlyArray.filter(
+    const children = Array.filter(
       Node.childrenFromEdges(
         node,
         canvas.getEdgesForNode(node),
@@ -74,7 +66,7 @@ const run = Effect.gen(function*(_) {
     y?: number,
     gap = 100
   ): void {
-    if (ReadonlyArray.isEmptyReadonlyArray(blocks)) {
+    if (Array.isEmptyReadonlyArray(blocks)) {
       return
     }
     const currentX = x ?? blocks[0].node.x
@@ -148,8 +140,8 @@ const UpdateSettings = Effect.gen(function*(_) {
   plugin.registerEvent(
     plugin.app.vault.on("rename", (file, prev) => {
       update((self) =>
-        Option.match(ReadonlyRecord.pop(self, prev), {
-          onSome: ([value]) => ReadonlyRecord.set(self, file.path, value),
+        Option.match(Record.pop(self, prev), {
+          onSome: ([value]) => Record.set(self, file.path, value),
           onNone: () => self
         })
       )
@@ -157,7 +149,7 @@ const UpdateSettings = Effect.gen(function*(_) {
   )
   plugin.registerEvent(
     plugin.app.vault.on("delete", (file) => {
-      update(ReadonlyRecord.remove(file.path))
+      update(Record.remove(file.path))
     })
   )
 }).pipe(Layer.effectDiscard)

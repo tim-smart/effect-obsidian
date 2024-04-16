@@ -1,11 +1,11 @@
 /**
  * @since 1.0.0
  */
+import * as Array from "effect/Array"
 import * as Effect from "effect/Effect"
 import { identity, pipe } from "effect/Function"
 import * as Option from "effect/Option"
 import * as Order from "effect/Order"
-import * as ReadonlyArray from "effect/ReadonlyArray"
 import * as Canvas from "../Canvas.js"
 
 /**
@@ -27,7 +27,7 @@ export const parent = (
     const canvas = yield* _(Canvas.Canvas)
     return pipe(
       canvas.getEdgesForNode(node),
-      ReadonlyArray.findFirst((edge) => edge.to.node.id === node.id),
+      Array.findFirst((edge) => edge.to.node.id === node.id),
       Option.map((_) => _.from.node)
     )
   })
@@ -54,14 +54,12 @@ export const childrenFromEdges = (
   leftToRight = false
 ): ReadonlyArray<Canvas.CanvasNode> =>
   pipe(
-    ReadonlyArray.filter(edges, (_) => _.from.node.id === node.id),
+    Array.filter(edges, (_) => _.from.node.id === node.id),
     leftToRight
-      ? ReadonlyArray.filter((_) =>
-        _.from.side === "right" && _.to.side === "left"
-      )
+      ? Array.filter((_) => _.from.side === "right" && _.to.side === "left")
       : identity,
-    ReadonlyArray.map((_) => _.to.node),
-    ReadonlyArray.sort(yOrder)
+    Array.map((_) => _.to.node),
+    Array.sort(yOrder)
   )
 
 /**
@@ -78,9 +76,9 @@ export const siblings = (
       Option.map((parent) =>
         pipe(
           canvas.getEdgesForNode(parent),
-          ReadonlyArray.filter((_) => _.from.node.id === parent.id),
-          ReadonlyArray.map((_) => _.to.node),
-          ReadonlyArray.sort(yOrder)
+          Array.filter((_) => _.from.node.id === parent.id),
+          Array.map((_) => _.to.node),
+          Array.sort(yOrder)
         )
       ),
       Option.getOrElse(() => [])

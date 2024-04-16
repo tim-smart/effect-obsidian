@@ -17,7 +17,7 @@ export const prototype = <A, K extends keyof A>(
     const symbol = Symbol.for(`effect-obsidian/Patch/${name}`)
     const proto = Object.getPrototypeOf(self)
     if (symbol in proto && proto[symbol] === true) {
-      return Effect.unit
+      return Effect.void
     }
     const original = proto[method]
     return Effect.acquireRelease(

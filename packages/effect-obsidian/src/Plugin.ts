@@ -106,7 +106,7 @@ export abstract class EffectClass<E> extends Obsidian.Plugin {
    */
   onunload(): void {
     if (this.scope) {
-      Effect.runFork(Scope.close(this.scope, Exit.unit))
+      Effect.runFork(Scope.close(this.scope, Exit.void))
       this.scope = undefined
     }
   }

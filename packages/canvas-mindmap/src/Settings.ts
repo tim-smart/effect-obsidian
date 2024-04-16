@@ -1,5 +1,5 @@
 import { Schema } from "@effect/schema"
-import { Effect, Option, ReadonlyRecord } from "effect"
+import { Effect, Option, Record } from "effect"
 import * as Settings from "effect-obsidian/Settings"
 import { PluginSettingTab, Setting } from "obsidian"
 
@@ -9,13 +9,13 @@ export const {
   runWhen,
   tag
 } = Settings.layer(
-  Schema.struct({
-    autoLayoutDefault: Schema.optional(Schema.boolean, {
+  Schema.Struct({
+    autoLayoutDefault: Schema.optional(Schema.Boolean, {
       default: () => false
     }),
     autoLayoutEnabledFor: Schema.optional(
-      Schema.record(Schema.string, Schema.boolean),
-      { default: () => ReadonlyRecord.empty() }
+      Schema.Record(Schema.String, Schema.Boolean),
+      { default: () => Record.empty() }
     )
   }),
   (get, update) => (class SettingsTab extends PluginSettingTab {
@@ -47,12 +47,12 @@ export const autoLayout = Effect.gen(function*(_) {
     (path: string) => {
       const current = settings.unsafeGet()
       return Option.getOrElse(
-        ReadonlyRecord.get(current.autoLayoutEnabledFor, path),
+        Record.get(current.autoLayoutEnabledFor, path),
         () => current.autoLayoutDefault
       )
     },
     (path: string, value: boolean) => {
-      return update(ReadonlyRecord.set(path, value))
+      return update(Record.set(path, value))
     },
     update
   ] as const
