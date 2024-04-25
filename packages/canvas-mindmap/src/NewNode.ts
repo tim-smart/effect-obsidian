@@ -7,11 +7,11 @@ export const NewNodeLive = Effect.all([
     id: "new-node",
     name: "New Node",
     hotkeys: [{ modifiers: ["Alt"], key: "Enter" }],
-    run: Effect.gen(function*(_) {
-      const canvas = yield* _(Canvas.Canvas)
-      const node = yield* _(Canvas.selectedNode, Effect.flatten)
-      const parentNode = yield* _(Node.parent(node))
-      const siblings = yield* _(Node.siblings(node))
+    run: Effect.gen(function*() {
+      const canvas = yield* Canvas.Canvas
+      const node = yield* Effect.flatten(Canvas.selectedNode)
+      const parentNode = yield* Node.parent(node)
+      const siblings = yield* Node.siblings(node)
       const lastNode = siblings[siblings.length - 1] ?? node
 
       const newNode = canvas.createTextNode({
@@ -24,12 +24,10 @@ export const NewNodeLive = Effect.all([
       newNode.setColor(node.color)
 
       if (Option.isSome(parentNode)) {
-        yield* _(
-          Canvas.createEdge({
-            from: parentNode.value,
-            to: newNode
-          })
-        )
+        yield Canvas.createEdge({
+          from: parentNode.value,
+          to: newNode
+        })
       }
 
       canvas.requestSave()
@@ -40,13 +38,10 @@ export const NewNodeLive = Effect.all([
     id: "new-child-node",
     name: "New Child Node",
     hotkeys: [{ modifiers: ["Alt"], key: "Tab" }],
-    run: Effect.gen(function*(_) {
-      const canvas = yield* _(Canvas.Canvas)
-      const node = yield* _(Canvas.selectedNode, Effect.flatten)
-      const lastChild = yield* _(
-        Node.children(node),
-        Effect.map(Array.last)
-      )
+    run: Effect.gen(function*() {
+      const canvas = yield* Canvas.Canvas
+      const node = yield* Effect.flatten(Canvas.selectedNode)
+      const lastChild = yield* Node.children(node).pipe(Effect.map(Array.last))
 
       const newNode = Option.match(lastChild, {
         onNone: () =>
@@ -65,12 +60,10 @@ export const NewNodeLive = Effect.all([
           })
       })
 
-      yield* _(
-        Canvas.createEdge({
-          from: node,
-          to: newNode
-        })
-      )
+      yield Canvas.createEdge({
+        from: node,
+        to: newNode
+      })
 
       canvas.requestSave()
       canvas.panIntoView(newNode.getBBox())

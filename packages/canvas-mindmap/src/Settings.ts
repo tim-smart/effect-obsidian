@@ -39,9 +39,9 @@ export const {
   })
 )
 
-export const autoLayout = Effect.gen(function*(_) {
-  const settings = yield* _(tag)
-  const [, update] = yield* _(prop("autoLayoutEnabledFor"))
+export const autoLayout = Effect.gen(function*() {
+  const settings = yield* tag
+  const [, update] = yield* prop("autoLayoutEnabledFor")
 
   return [
     (path: string) => {

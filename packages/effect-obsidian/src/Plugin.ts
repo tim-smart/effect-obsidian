@@ -139,10 +139,10 @@ export interface Command<R, E> extends BaseCommand {
 export const addCommand = <R, E>(
   command: Command<R, E>
 ): Effect.Effect<void, never, R | Plugin | Scope.Scope> =>
-  Effect.gen(function*(_) {
-    const plugin = yield* _(Plugin)
-    const runtime = yield* _(Effect.runtime<R>())
-    const run = yield* _(FiberSet.makeRuntime<R>())
+  Effect.gen(function*() {
+    const plugin = yield* Plugin
+    const runtime = yield* Effect.runtime<R>()
+    const run = yield* FiberSet.makeRuntime<R>()
     const runSync = Runtime.runSync(runtime)
 
     plugin.addCommand(
@@ -177,14 +177,14 @@ export const addCommandEditor = <R, E>(
   never,
   Exclude<Exclude<R, Editor>, MarkdownView> | Plugin | Scope.Scope
 > =>
-  Effect.gen(function*(_) {
-    const plugin = yield* _(Plugin)
-    const runtime = yield* _(
-      Effect.runtime<Exclude<Exclude<R, Editor>, MarkdownView>>()
-    )
-    const run = yield* _(
-      FiberSet.makeRuntime<Exclude<Exclude<R, Editor>, MarkdownView>>()
-    )
+  Effect.gen(function*() {
+    const plugin = yield* Plugin
+    const runtime = yield* Effect.runtime<
+      Exclude<Exclude<R, Editor>, MarkdownView>
+    >()
+    const run = yield* FiberSet.makeRuntime<
+      Exclude<Exclude<R, Editor>, MarkdownView>
+    >()
     const runSync = Runtime.runSync(runtime)
 
     plugin.addCommand(
@@ -234,8 +234,8 @@ export const workspace: Effect.Effect<Obsidian.Workspace, never, Plugin> =
 export const runner = <Args extends ReadonlyArray<any>, R, E>(
   f: (...args: Args) => Effect.Effect<void, E, R>
 ): Effect.Effect<(...args: Args) => void, never, Scope.Scope | R> =>
-  Effect.gen(function*(_) {
-    const run = yield* _(FiberSet.makeRuntime<R>())
+  Effect.gen(function*() {
+    const run = yield* FiberSet.makeRuntime<R>()
     return (...args: Args) => {
       run(f(...args))
     }

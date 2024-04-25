@@ -6,11 +6,10 @@ export const NodeNavigationLive = Effect.all([
   Canvas.addCommand({
     id: "focus-down",
     name: "Focus down",
-    run: Effect.gen(function*(_) {
-      const canvas = yield* _(Canvas.Canvas)
-      const node = yield* _(Canvas.selectedNode, Effect.flatten)
-      const nextNode = yield* _(
-        Node.siblings(node),
+    run: Effect.gen(function*() {
+      const canvas = yield* Canvas.Canvas
+      const node = yield* Effect.flatten(Canvas.selectedNode)
+      const nextNode = yield* Node.siblings(node).pipe(
         Effect.flatMap(Array.findFirst((_) => _.y > node.y))
       )
       canvas.selectOnly(nextNode)
@@ -20,11 +19,10 @@ export const NodeNavigationLive = Effect.all([
   Canvas.addCommand({
     id: "focus-up",
     name: "Focus up",
-    run: Effect.gen(function*(_) {
-      const canvas = yield* _(Canvas.Canvas)
-      const node = yield* _(Canvas.selectedNode, Effect.flatten)
-      const nextNode = yield* _(
-        Node.siblings(node),
+    run: Effect.gen(function*() {
+      const canvas = yield* Canvas.Canvas
+      const node = yield* Effect.flatten(Canvas.selectedNode)
+      const nextNode = yield* Node.siblings(node).pipe(
         Effect.flatMap(Array.findLast((_) => _.y < node.y))
       )
       canvas.selectOnly(nextNode)
@@ -34,10 +32,10 @@ export const NodeNavigationLive = Effect.all([
   Canvas.addCommand({
     id: "focus-left",
     name: "Focus left",
-    run: Effect.gen(function*(_) {
-      const canvas = yield* _(Canvas.Canvas)
-      const node = yield* _(Canvas.selectedNode, Effect.flatten)
-      const parent = yield* _(Node.parent(node), Effect.flatten)
+    run: Effect.gen(function*() {
+      const canvas = yield* Canvas.Canvas
+      const node = yield* Effect.flatten(Canvas.selectedNode)
+      const parent = yield* Effect.flatten(Node.parent(node))
       canvas.selectOnly(parent)
       canvas.panIntoView(parent.getBBox())
     })
@@ -45,11 +43,10 @@ export const NodeNavigationLive = Effect.all([
   Canvas.addCommand({
     id: "focus-right",
     name: "Focus right",
-    run: Effect.gen(function*(_) {
-      const canvas = yield* _(Canvas.Canvas)
-      const node = yield* _(Canvas.selectedNode, Effect.flatten)
-      const child = yield* _(
-        Node.children(node),
+    run: Effect.gen(function*() {
+      const canvas = yield* Canvas.Canvas
+      const node = yield* Effect.flatten(Canvas.selectedNode)
+      const child = yield* Node.children(node).pipe(
         Effect.flatMap(Array.head)
       )
       canvas.selectOnly(child)

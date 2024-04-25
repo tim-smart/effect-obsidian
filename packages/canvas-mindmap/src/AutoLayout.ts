@@ -26,8 +26,8 @@ class NodeBlock {
   readonly height: number
 }
 
-const run = Effect.gen(function*(_) {
-  const canvas = yield* _(Canvas.Canvas)
+const run = Effect.gen(function*() {
+  const canvas = yield* Canvas.Canvas
 
   // root nodes
   const roots: Array<Canvas.CanvasNode> = []
@@ -88,10 +88,10 @@ const run = Effect.gen(function*(_) {
   canvas.requestSave()
 })
 
-const PatchMenu = Effect.gen(function*(_) {
-  const scope = yield* _(Effect.scope)
-  const [get, set] = yield* _(Settings.autoLayout)
-  yield* _(Canvas.onActive(Canvas.Canvas.pipe(
+const PatchMenu = Effect.gen(function*() {
+  const scope = yield* Effect.scope
+  const [get, set] = yield* Settings.autoLayout
+  yield Canvas.onActive(Canvas.Canvas.pipe(
     Effect.flatMap((canvas) =>
       Patch.prototype(
         "AutoLayout",
@@ -110,20 +110,18 @@ const PatchMenu = Effect.gen(function*(_) {
       )
     ),
     Scope.extend(scope)
-  )))
+  ))
 }).pipe(Layer.scopedDiscard)
 
-const AutoLayoutOnChange = Canvas.onActive(Effect.gen(function*(_) {
-  const canvas = yield* _(Canvas.Canvas)
-  const [get] = yield* _(Settings.autoLayout)
+const AutoLayoutOnChange = Canvas.onActive(Effect.gen(function*() {
+  const canvas = yield* Canvas.Canvas
+  const [get] = yield* Settings.autoLayout
   const path = canvas.view.file!.path
-  yield* _(
-    Settings.runWhen(
-      () => get(path),
-      Canvas.nodeChanges(canvas).pipe(
-        Stream.filter(() => get(path)),
-        Stream.runForEach(() => run)
-      )
+  yield Settings.runWhen(
+    () => get(path),
+    Canvas.nodeChanges(canvas).pipe(
+      Stream.filter(() => get(path)),
+      Stream.runForEach(() => run)
     )
   )
 })).pipe(Layer.scopedDiscard)
@@ -134,9 +132,9 @@ const Command = Canvas.addCommand({
   run
 }).pipe(Layer.scopedDiscard)
 
-const UpdateSettings = Effect.gen(function*(_) {
-  const plugin = yield* _(Plugin.Plugin)
-  const [, , update] = yield* _(Settings.autoLayout)
+const UpdateSettings = Effect.gen(function*() {
+  const plugin = yield* Plugin.Plugin
+  const [, , update] = yield* Settings.autoLayout
   plugin.registerEvent(
     plugin.app.vault.on("rename", (file, prev) => {
       update((self) =>

@@ -144,8 +144,8 @@ export const selectedNode: Effect.Effect<
   Option.Option<CanvasNode>,
   never,
   Canvas
-> = Effect.gen(function*(_) {
-  const canvas = yield* _(Canvas)
+> = Effect.gen(function*() {
+  const canvas = yield* Canvas
   return pipe(Array.fromIterable(canvas.selection), Array.head)
 })
 
@@ -160,11 +160,10 @@ export const onActive = <R, E>(
   never,
   Plugin.Plugin | Scope.Scope | Exclude<Exclude<R, Scope.Scope>, Canvas>
 > =>
-  Effect.gen(function*(_) {
-    const handle = yield* _(FiberHandle.make())
+  Effect.gen(function*() {
+    const handle = yield* FiberHandle.make()
     const scoped = Effect.scoped(effect)
-    yield* _(
-      get,
+    yield get.pipe(
       Effect.flatMap(Option.match({
         onNone: () => FiberHandle.clear(handle),
         onSome: (canvas) =>
@@ -203,10 +202,9 @@ export const onNodeChanges = <R, E>(
   never,
   Plugin.Plugin | Scope.Scope | Exclude<R, Canvas>
 > =>
-  onActive(Effect.gen(function*(_) {
-    const canvas = yield* _(Canvas)
-    yield* _(
-      nodeChanges(canvas),
+  onActive(Effect.gen(function*() {
+    const canvas = yield* Canvas
+    yield nodeChanges(canvas).pipe(
       Stream.mapEffect((_) => Effect.ignoreLogged(effect)),
       Stream.runDrain,
       Effect.forkScoped

@@ -4,7 +4,7 @@
 import * as Schema from "@effect/schema/Schema"
 import * as Context from "effect/Context"
 import * as Effect from "effect/Effect"
-import * as FiberMap from "effect/FiberMap"
+import * as FiberHandle from "effect/FiberHandle"
 import * as Layer from "effect/Layer"
 import type * as Scope from "effect/Scope"
 import * as Stream from "effect/Stream"
@@ -67,17 +67,15 @@ export const layer = <
   const tag = Context.GenericTag<Settings, SettingsService<A>>(
     "effect-obsidian/Settings"
   )
-  const layer = Effect.gen(function*(_) {
-    const plugin = yield* _(Plugin)
-    const data = yield* _(
-      Effect.promise(() => plugin.loadData()),
+  const layer = Effect.gen(function*() {
+    const plugin = yield* Plugin
+    const data = yield* Effect.promise(() => plugin.loadData()).pipe(
       Effect.flatMap((_) => Schema.decodeUnknown(schema)(_ || {})),
       Effect.orDie
     )
-    const ref = yield* _(SubscriptionRef.make(data))
+    const ref = yield* SubscriptionRef.make(data)
 
-    yield* _(
-      ref.changes,
+    yield ref.changes.pipe(
       Stream.drop(1),
       Stream.debounce(1000),
       Stream.flatMap(Schema.encode(schema)),
@@ -110,20 +108,19 @@ export const layer = <
     never,
     Settings | Scope.Scope | Exclude<R, Scope.Scope>
   > =>
-    Effect.gen(function*(_) {
-      const settings = yield* _(tag)
-      const map = yield* _(FiberMap.make<string>())
-      yield* _(
-        settings.ref.changes,
+    Effect.gen(function*() {
+      const settings = yield* tag
+      const map = yield* FiberHandle.make()
+      yield settings.ref.changes.pipe(
         Stream.mapEffect(
           (_): Effect.Effect<void, never, Exclude<R, Scope.Scope>> =>
             f(_) ?
               effect.pipe(
                 Effect.zipRight(Effect.never),
                 Effect.scoped,
-                FiberMap.run(map, "fiber")
+                FiberHandle.run(map)
               ) :
-              FiberMap.clear(map)
+              FiberHandle.clear(map)
         ),
         Stream.runDrain,
         Effect.forkScoped
@@ -133,8 +130,8 @@ export const layer = <
   const prop = <K extends keyof A>(
     key: K
   ) =>
-    Effect.gen(function*(_) {
-      const settings = yield* _(tag)
+    Effect.gen(function*() {
+      const settings = yield* tag
       const get = () => settings.unsafeGet()[key]
       const update = (f: (_: A[K]) => A[K]) =>
         settings.unsafeUpdate((_) => ({
