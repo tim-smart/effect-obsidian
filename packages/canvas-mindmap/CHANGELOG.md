@@ -1,5 +1,13 @@
 # obsidian-canvas-mindmap
 
+## 0.1.14
+
+### Patch Changes
+
+- [`1feea4c`](https://github.com/tim-smart/effect-obsidian/commit/1feea4cb45d5a2866334af0b4a249f89d26f934e) Thanks [@tim-smart](https://github.com/tim-smart)! - update dependencies
+
+- [`41ff83c`](https://github.com/tim-smart/effect-obsidian/commit/41ff83c097d086bcd9c4ab5f59c632a137645d5a) Thanks [@tim-smart](https://github.com/tim-smart)! - update effect
+
 ## 0.1.13
 
 ### Patch Changes
