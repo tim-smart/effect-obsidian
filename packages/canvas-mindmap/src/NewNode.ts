@@ -24,7 +24,7 @@ export const NewNodeLive = Effect.all([
       newNode.setColor(node.color)
 
       if (Option.isSome(parentNode)) {
-        yield Canvas.createEdge({
+        yield* Canvas.createEdge({
           from: parentNode.value,
           to: newNode
         })
@@ -60,7 +60,7 @@ export const NewNodeLive = Effect.all([
           })
       })
 
-      yield Canvas.createEdge({
+      yield* Canvas.createEdge({
         from: node,
         to: newNode
       })

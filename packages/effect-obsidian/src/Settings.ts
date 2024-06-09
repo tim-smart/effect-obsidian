@@ -75,7 +75,7 @@ export const layer = <
     )
     const ref = yield* SubscriptionRef.make(data)
 
-    yield ref.changes.pipe(
+    yield* ref.changes.pipe(
       Stream.drop(1),
       Stream.debounce(1000),
       Stream.flatMap(Schema.encode(schema)),
@@ -111,7 +111,7 @@ export const layer = <
     Effect.gen(function*() {
       const settings = yield* tag
       const map = yield* FiberHandle.make()
-      yield settings.ref.changes.pipe(
+      yield* settings.ref.changes.pipe(
         Stream.mapEffect(
           (_): Effect.Effect<void, never, Exclude<R, Scope.Scope>> =>
             f(_) ?

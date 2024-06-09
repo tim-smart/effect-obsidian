@@ -91,7 +91,7 @@ const run = Effect.gen(function*() {
 const PatchMenu = Effect.gen(function*() {
   const scope = yield* Effect.scope
   const [get, set] = yield* Settings.autoLayout
-  yield Canvas.onActive(Canvas.Canvas.pipe(
+  yield* Canvas.onActive(Canvas.Canvas.pipe(
     Effect.flatMap((canvas) =>
       Patch.prototype(
         "AutoLayout",
@@ -117,7 +117,7 @@ const AutoLayoutOnChange = Canvas.onActive(Effect.gen(function*() {
   const canvas = yield* Canvas.Canvas
   const [get] = yield* Settings.autoLayout
   const path = canvas.view.file!.path
-  yield Settings.runWhen(
+  yield* Settings.runWhen(
     () => get(path),
     Canvas.nodeChanges(canvas).pipe(
       Stream.filter(() => get(path)),

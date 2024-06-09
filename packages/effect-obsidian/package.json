@@ -35,8 +35,8 @@
     }
   },
   "devDependencies": {
-    "@effect/schema": "^0.66.8",
-    "effect": "^3.0.5",
+    "@effect/schema": "^0.67.21",
+    "effect": "^3.3.0",
     "obsidian": "1.5.7-1"
   },
   "peerDependencies": {

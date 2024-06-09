@@ -163,7 +163,7 @@ export const onActive = <R, E>(
   Effect.gen(function*() {
     const handle = yield* FiberHandle.make()
     const scoped = Effect.scoped(effect)
-    yield get.pipe(
+    yield* get.pipe(
       Effect.flatMap(Option.match({
         onNone: () => FiberHandle.clear(handle),
         onSome: (canvas) =>
@@ -204,7 +204,7 @@ export const onNodeChanges = <R, E>(
 > =>
   onActive(Effect.gen(function*() {
     const canvas = yield* Canvas
-    yield nodeChanges(canvas).pipe(
+    yield* nodeChanges(canvas).pipe(
       Stream.mapEffect((_) => Effect.ignoreLogged(effect)),
       Stream.runDrain,
       Effect.forkScoped
