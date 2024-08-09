@@ -1,5 +1,11 @@
 # effect-obsidian
 
+## 0.3.2
+
+### Patch Changes
+
+- [`0ce9e30`](https://github.com/tim-smart/effect-obsidian/commit/0ce9e30c9319be8112a5c0be3ab157d43c988473) - use FiberHandle for Canvas.onActive
+
 ## 0.3.1
 
 ### Patch Changes
