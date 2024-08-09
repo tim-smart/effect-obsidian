@@ -19,8 +19,7 @@
           mkShell {
             buildInputs = [
               corepack
-              deno
-              nodejs-slim_22
+              nodejs_22
             ];
           };
       };

@@ -10,11 +10,11 @@ export const {
   tag
 } = Settings.layer(
   Schema.Struct({
-    autoLayoutDefault: Schema.optional(Schema.Boolean, {
+    autoLayoutDefault: Schema.optionalWith(Schema.Boolean, {
       default: () => false
     }),
-    autoLayoutEnabledFor: Schema.optional(
-      Schema.Record(Schema.String, Schema.Boolean),
+    autoLayoutEnabledFor: Schema.optionalWith(
+      Schema.Record({ key: Schema.String, value: Schema.Boolean }),
       { default: () => Record.empty() }
     )
   }),

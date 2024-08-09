@@ -41,7 +41,6 @@ module.exports = {
     "prefer-rest-params": "off",
     "prefer-spread": "off",
     "import/first": "error",
-    "import/no-cycle": "error",
     "import/newline-after-import": "error",
     "import/no-duplicates": "error",
     "import/no-unresolved": "off",

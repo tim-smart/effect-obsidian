@@ -120,6 +120,7 @@ export const createEdge = (options: {
   readonly toSide?: NodeSide
 }): Effect.Effect<void, never, Canvas> =>
   Effect.andThen(Canvas, (canvas) => {
+    if (canvas.readonly) return
     const data = canvas.getData()
     canvas.importData({
       edges: [
