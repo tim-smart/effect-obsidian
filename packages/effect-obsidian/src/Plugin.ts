@@ -116,6 +116,7 @@ export abstract class EffectClass<E> extends Obsidian.Plugin {
  * @since 1.0.0
  * @category commands
  */
+// eslint-disable-next-line @typescript-eslint/no-empty-object-type
 export interface BaseCommand extends
   Omit<
     Obsidian.Command,
