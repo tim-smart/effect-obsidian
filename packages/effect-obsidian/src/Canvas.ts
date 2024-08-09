@@ -1,11 +1,11 @@
 /**
  * @since 1.0.0
  */
+import { ScopedRef } from "effect"
 import * as Array from "effect/Array"
 import * as Context from "effect/Context"
 import * as Effect from "effect/Effect"
-import * as FiberHandle from "effect/FiberHandle"
-import { pipe } from "effect/Function"
+import { constVoid, pipe } from "effect/Function"
 import * as Option from "effect/Option"
 import * as Schedule from "effect/Schedule"
 import type * as Scope from "effect/Scope"
@@ -87,6 +87,18 @@ export const get: Effect.Effect<Option.Option<Canvas>, never, Plugin.Plugin> =
 
 /**
  * @since 1.0.0
+ * @category accessors
+ */
+export const latest: Stream.Stream<
+  Option.Option<Canvas>,
+  never,
+  Plugin.Plugin
+> = Stream.repeatEffectWithSchedule(get, Schedule.spaced(2000)).pipe(
+  Stream.changes
+)
+
+/**
+ * @since 1.0.0
  * @category commands
  */
 export const addCommand = <R, E>(command: Plugin.Command<R, E>) =>
@@ -159,21 +171,28 @@ export const onActive = <R, E>(
 ): Effect.Effect<
   void,
   never,
-  Plugin.Plugin | Scope.Scope | Exclude<Exclude<R, Scope.Scope>, Canvas>
+  | Scope.Scope
+  | Plugin.Plugin
+  | Exclude<Exclude<R, Canvas>, Scope.Scope>
 > =>
   Effect.gen(function*() {
-    const handle = yield* FiberHandle.make()
-    const scoped = Effect.scoped(effect)
-    yield* get.pipe(
-      Effect.flatMap(Option.match({
-        onNone: () => FiberHandle.clear(handle),
-        onSome: (canvas) =>
-          scoped.pipe(
-            Effect.provideService(Canvas, canvas),
-            FiberHandle.run(handle, { onlyIfMissing: true })
-          )
-      })),
-      Effect.schedule(Schedule.spaced(2000)),
+    const ref = yield* ScopedRef.make(constVoid)
+    yield* latest.pipe(
+      Stream.flatMap(
+        Option.match({
+          onNone: () => ScopedRef.set(ref, Effect.void),
+          onSome: (canvas) =>
+            ScopedRef.set(
+              ref,
+              effect.pipe(
+                Effect.provideService(Canvas, canvas),
+                Effect.catchAllCause(Effect.logDebug)
+              )
+            )
+        }),
+        { switch: true }
+      ),
+      Stream.runDrain,
       Effect.forkScoped
     )
   })
