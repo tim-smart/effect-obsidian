@@ -87,6 +87,14 @@ export const get: Effect.Effect<Option.Option<Canvas>, never, Plugin.Plugin> =
 
 /**
  * @since 1.0.0
+ * @category accessors
+ */
+export const prop = <K extends keyof Canvas>(
+  key: K
+): Effect.Effect<Canvas[K], never, Canvas> => Effect.map(Canvas, (_) => _[key])
+
+/**
+ * @since 1.0.0
  * @category commands
  */
 export const addCommand = <R, E>(command: Plugin.Command<R, E>) =>
@@ -120,7 +128,6 @@ export const createEdge = (options: {
   readonly toSide?: NodeSide
 }): Effect.Effect<void, never, Canvas> =>
   Effect.andThen(Canvas, (canvas) => {
-    if (canvas.readonly) return
     const data = canvas.getData()
     canvas.importData({
       edges: [

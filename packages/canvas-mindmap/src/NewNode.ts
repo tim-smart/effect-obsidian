@@ -2,11 +2,14 @@ import { Array, Effect, Layer, Option } from "effect"
 import * as Canvas from "effect-obsidian/Canvas"
 import * as Node from "effect-obsidian/Canvas/Node"
 
+const writable = Effect.negate(Canvas.prop("readonly"))
+
 export const NewNodeLive = Effect.all([
   Canvas.addCommand({
     id: "new-node",
     name: "New Node",
     hotkeys: [{ modifiers: ["Alt"], key: "Enter" }],
+    check: writable,
     run: Effect.gen(function*() {
       const canvas = yield* Canvas.Canvas
       const node = yield* Effect.flatten(Canvas.selectedNode)
@@ -38,6 +41,7 @@ export const NewNodeLive = Effect.all([
     id: "new-child-node",
     name: "New Child Node",
     hotkeys: [{ modifiers: ["Alt"], key: "Tab" }],
+    check: writable,
     run: Effect.gen(function*() {
       const canvas = yield* Canvas.Canvas
       const node = yield* Effect.flatten(Canvas.selectedNode)
