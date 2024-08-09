@@ -1,11 +1,11 @@
 /**
  * @since 1.0.0
  */
-import { ScopedRef } from "effect"
 import * as Array from "effect/Array"
 import * as Context from "effect/Context"
 import * as Effect from "effect/Effect"
-import { constVoid, pipe } from "effect/Function"
+import * as FiberHandle from "effect/FiberHandle"
+import { pipe } from "effect/Function"
 import * as Option from "effect/Option"
 import * as Schedule from "effect/Schedule"
 import type * as Scope from "effect/Scope"
@@ -87,18 +87,6 @@ export const get: Effect.Effect<Option.Option<Canvas>, never, Plugin.Plugin> =
 
 /**
  * @since 1.0.0
- * @category accessors
- */
-export const latest: Stream.Stream<
-  Option.Option<Canvas>,
-  never,
-  Plugin.Plugin
-> = Stream.repeatEffectWithSchedule(get, Schedule.spaced(2000)).pipe(
-  Stream.changes
-)
-
-/**
- * @since 1.0.0
  * @category commands
  */
 export const addCommand = <R, E>(command: Plugin.Command<R, E>) =>
@@ -171,28 +159,26 @@ export const onActive = <R, E>(
 ): Effect.Effect<
   void,
   never,
-  | Scope.Scope
-  | Plugin.Plugin
-  | Exclude<Exclude<R, Canvas>, Scope.Scope>
+  Plugin.Plugin | Scope.Scope | Exclude<Exclude<R, Scope.Scope>, Canvas>
 > =>
   Effect.gen(function*() {
-    const ref = yield* ScopedRef.make(constVoid)
-    yield* latest.pipe(
-      Stream.flatMap(
+    const handle = yield* FiberHandle.make()
+    const scoped = effect.pipe(
+      Effect.zipRight(Effect.never),
+      Effect.scoped
+    )
+    yield* get.pipe(
+      Effect.flatMap(
         Option.match({
-          onNone: () => ScopedRef.set(ref, Effect.void),
+          onNone: () => FiberHandle.clear(handle),
           onSome: (canvas) =>
-            ScopedRef.set(
-              ref,
-              effect.pipe(
-                Effect.provideService(Canvas, canvas),
-                Effect.catchAllCause(Effect.logDebug)
-              )
+            scoped.pipe(
+              Effect.provideService(Canvas, canvas),
+              FiberHandle.run(handle, { onlyIfMissing: true })
             )
-        }),
-        { switch: true }
+        })
       ),
-      Stream.runDrain,
+      Effect.schedule(Schedule.spaced(2000)),
       Effect.forkScoped
     )
   })

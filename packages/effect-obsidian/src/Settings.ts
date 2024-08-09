@@ -110,7 +110,7 @@ export const layer = <
   > =>
     Effect.gen(function*() {
       const settings = yield* tag
-      const map = yield* FiberHandle.make()
+      const handle = yield* FiberHandle.make()
       yield* settings.ref.changes.pipe(
         Stream.mapEffect(
           (_): Effect.Effect<void, never, Exclude<R, Scope.Scope>> =>
@@ -118,9 +118,9 @@ export const layer = <
               effect.pipe(
                 Effect.zipRight(Effect.never),
                 Effect.scoped,
-                FiberHandle.run(map)
+                FiberHandle.run(handle, { onlyIfMissing: true })
               ) :
-              FiberHandle.clear(map)
+              FiberHandle.clear(handle)
         ),
         Stream.runDrain,
         Effect.forkScoped
