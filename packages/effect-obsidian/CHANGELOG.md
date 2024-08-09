@@ -1,5 +1,11 @@
 # effect-obsidian
 
+## 0.3.1
+
+### Patch Changes
+
+- [`9606b30`](https://github.com/tim-smart/effect-obsidian/commit/9606b3020e207cb77ad741ffb9d702fa435ebaf4) Thanks [@tim-smart](https://github.com/tim-smart)! - fix Canvas.onActive
+
 ## 0.3.0
 
 ### Minor Changes
