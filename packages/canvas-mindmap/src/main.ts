@@ -5,8 +5,6 @@ import { NewNodeLive } from "./NewNode.js"
 import { NodeNavigationLive } from "./NodeNavigation.js"
 
 const MainLive = Layer.mergeAll(AutoLayoutLive, NewNodeLive, NodeNavigationLive)
-  .pipe(
-    Layer.provide(Logger.minimumLogLevel(LogLevel.Debug))
-  )
+  .pipe(Layer.provide(Logger.minimumLogLevel(LogLevel.Debug)))
 
 export default class CanvasMindmap extends Plugin.Class(MainLive) {}

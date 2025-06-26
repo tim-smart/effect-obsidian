@@ -1,6 +1,6 @@
-import { Schema } from "@effect/schema"
 import { Effect, Option, Record } from "effect"
 import * as Settings from "effect-obsidian/Settings"
+import * as Schema from "effect/Schema"
 import { PluginSettingTab, Setting } from "obsidian"
 
 export const {
