@@ -19,7 +19,7 @@
           mkShell {
             buildInputs = [
               corepack
-              nodejs_22
+              nodejs
             ];
           };
       };

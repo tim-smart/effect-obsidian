@@ -116,9 +116,6 @@ importers:
         specifier: ^1.8.7
         version: 1.8.7(@codemirror/state@6.5.2)(@codemirror/view@6.37.2)
     devDependencies:
-      '@effect/schema':
-        specifier: ^0.75.5
-        version: 0.75.5(effect@3.16.9)
       effect:
         specifier: ^3.16.9
         version: 3.16.9
@@ -347,12 +344,6 @@ packages:
     resolution: {integrity: sha512-IRfvvwqQLabVTIw9hhIj4scOGIYPfa13QuEFv+dBWE6p47R+RR0J8jQvfDINFf0Vn80XXVjNRtZxkZpkKXLx2A==}
     engines: {node: '>=0.10.0'}
     hasBin: true
-
-  '@effect/schema@0.75.5':
-    resolution: {integrity: sha512-TQInulTVCuF+9EIbJpyLP6dvxbQJMphrnRqgexm/Ze39rSjfhJuufF7XvU3SxTgg3HnL7B/kpORTJbHhlE6thw==}
-    deprecated: this package has been merged into the main effect package
-    peerDependencies:
-      effect: ^3.9.2
 
   '@emnapi/core@1.4.3':
     resolution: {integrity: sha512-4m62DuCE07lw01soJwPiBGC0nAww0Q+RY70VZ+n49yDIO13yyinhbWCeNnaob0lakDtWQzSdtNWzJeOJt2ma+g==}
@@ -3738,11 +3729,6 @@ snapshots:
       remarkable: 1.7.4
       repeat-string: 1.6.1
       strip-color: 0.1.0
-
-  '@effect/schema@0.75.5(effect@3.16.9)':
-    dependencies:
-      effect: 3.16.9
-      fast-check: 3.23.2
 
   '@emnapi/core@1.4.3':
     dependencies:
